@@ -1,0 +1,137 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.14'
+    id 'io.spring.dependency-management' version '1.1.7'
+
+    /* REST Docs + OpenAPI */
+    id 'com.epages.restdocs-api-spec' version '0.17.1'
+    id 'org.hidetake.swagger.generator' version '2.18.2'
+}
+
+group = 'com.project'
+version = '0.0.1-SNAPSHOT'
+description = 'DevLog'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    /*WEB*/
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    /*SECURITY*/
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    /*JJWT*/
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+    /*JPA & DB & REDIS*/
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    /* QueryDSL */
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    /* EMAIL */
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    /*LOMBOK*/
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    /*TEST*/
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    /* REST DOCS */
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+    /* OPEN API */
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.17.1'
+
+    /* TEST CONTAINERS */
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
+    testImplementation 'org.testcontainers:mysql:1.19.0'
+    testImplementation 'com.redis:testcontainers-redis:2.1.0'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+
+/* QueryDSL */
+
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+clean {
+    delete querydslDir
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += querydslDir
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.generatedSourceOutputDirectory = querydslDir
+}
+
+
+
+/* REST DOCS */
+
+ext {
+    snippetsDir = file("build/generated-snippets")
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    outputs.dir snippetsDir
+}
+
+/* OPEN API 3 */
+
+openapi3 {
+    server = 'http://localhost:8080'
+
+    title = 'DevLog API'
+    description = 'DevLog API Documentation'
+    version = '1.0.0'
+
+    format = 'yaml'
+}
+
+/* Swagger UI */
+
+tasks.register('copyOasToSwagger', Copy) {
+    dependsOn 'openapi3'
+
+    delete("src/main/resources/static/swagger-ui/openapi3.yaml")
+    from("$buildDir/api-spec/openapi3.yaml")
+    into("src/main/resources/static/swagger-ui/.")
+
+    rename {
+        'openapi3.yaml'
+    }
+}
