@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 
     /* REST Docs + OpenAPI */
-    id 'com.epages.restdocs-api-spec' version '0.17.1'
+    id 'com.epages.restdocs-api-spec' version '0.19.2'
     id 'org.hidetake.swagger.generator' version '2.18.2'
 }
 
@@ -62,7 +62,7 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
     /* OPEN API */
-    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.17.1'
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.19.2'
 
     /* TEST CONTAINERS */
     testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
@@ -114,11 +114,9 @@ tasks.named('test') {
 
 openapi3 {
     server = 'http://localhost:8080'
-
     title = 'DevLog API'
     description = 'DevLog API Documentation'
-    version = '1.0.0'
-
+    version = '0.1.0'
     format = 'yaml'
 }
 
@@ -127,11 +125,12 @@ openapi3 {
 tasks.register('copyOasToSwagger', Copy) {
     dependsOn 'openapi3'
 
-    delete("src/main/resources/static/swagger-ui/openapi3.yaml")
-    from("$buildDir/api-spec/openapi3.yaml")
-    into("src/main/resources/static/swagger-ui/.")
+    from(layout.buildDirectory.dir("api-spec/openapi3.yaml"))
 
-    rename {
-        'openapi3.yaml'
-    }
+    into(layout.buildDirectory.dir("resources/main/static/swagger-ui"))
+    into("src/main/resources/static/swagger-ui")
+}
+
+tasks.named('bootJar') {
+    dependsOn 'copyOasToSwagger'
 }
