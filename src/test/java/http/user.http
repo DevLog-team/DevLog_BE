@@ -1,0 +1,9 @@
+### 회원가입
+POST http://localhost:8080/api/signup
+Content-Type: application/json
+
+{
+  "email": "test@naver.com",
+  "password": "testpw1234",
+  "name": "test1"
+}
