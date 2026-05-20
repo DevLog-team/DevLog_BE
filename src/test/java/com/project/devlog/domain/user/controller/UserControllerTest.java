@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
+import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.user.dto.request.SignupRequest;
 import com.project.devlog.domain.user.mock.UserMock;
@@ -74,6 +75,7 @@ class UserControllerTest {
                                         ResourceSnippetParameters.builder()
                                                 .tag("User")
                                                 .description("회원가입 API")
+                                                .requestSchema(Schema.schema("SignupRequest"))
                                                 .requestFields(
                                                         fieldWithPath("email").type(JsonFieldType.STRING)
                                                                 .description("사용자 이메일")
@@ -84,6 +86,7 @@ class UserControllerTest {
                                                         fieldWithPath("name").type(JsonFieldType.STRING)
                                                                 .description("사용자 이름")
                                                                 .attributes(key("constraint").value("사용자 이름")))
+                                                .responseSchema(Schema.schema("SignupResponse"))
                                                 .responseFields(
                                                         fieldWithPath("status").type(JsonFieldType.STRING)
                                                                 .description("응답 상태"),

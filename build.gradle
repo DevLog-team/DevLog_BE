@@ -36,7 +36,10 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
     /*JPA & DB & REDIS*/
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation('com.oracle.database.jdbc:ojdbc11-production') {
+        // Logback 파서와 충돌을 일으키는 오라클 전용 XML 파서를 의존성에서 완전히 제외합니다.
+        exclude group: 'com.oracle.database.xml', module: 'xmlparserv2'
+    }
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
@@ -45,9 +48,6 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
-
-    /* EMAIL */
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     /*LOMBOK*/
     compileOnly 'org.projectlombok:lombok'
@@ -66,7 +66,7 @@ dependencies {
 
     /* TEST CONTAINERS */
     testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
-    testImplementation 'org.testcontainers:mysql:1.19.0'
+    testImplementation 'org.testcontainers:oracle-xe:1.19.0'
     testImplementation 'com.redis:testcontainers-redis:2.1.0'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -99,7 +99,7 @@ tasks.withType(JavaCompile).configureEach {
 
 
 
-/* REST DOCS */
+/* REST DOCS & OPEN API */
 
 ext {
     snippetsDir = file("build/generated-snippets")
@@ -110,8 +110,6 @@ tasks.named('test') {
     outputs.dir snippetsDir
 }
 
-/* OPEN API 3 */
-
 openapi3 {
     server = 'http://localhost:8080'
     title = 'DevLog API'
@@ -120,15 +118,14 @@ openapi3 {
     format = 'yaml'
 }
 
-/* Swagger UI */
-
 tasks.register('copyOasToSwagger', Copy) {
-    dependsOn 'openapi3'
+    dependsOn 'test', 'openapi3'
 
-    from(layout.buildDirectory.dir("api-spec/openapi3.yaml"))
+    from(layout.buildDirectory.file("api-spec/openapi3.yaml"))
 
     into(layout.buildDirectory.dir("resources/main/static/swagger-ui"))
-    into("src/main/resources/static/swagger-ui")
+
+    into(file("src/main/resources/static/swagger-ui"))
 }
 
 tasks.named('bootJar') {

@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  web:
+    image: ${DOCKERHUB_USERNAME}/devlog:latest
+    container_name: devlog-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - /home/ubuntu/app/wallet:/app/wallet
+      - /home/ubuntu/app/logs:/app/logs
+    environment:
+      PROD_DB_PASSWORD: ${PROD_DB_PASSWORD}
+      PROD_JWT_SECRET: ${PROD_JWT_SECRET}
+      PROD_TNS_ADMIN: /app/wallet
+      PROD_REDIS_HOST: redis
+    restart: always

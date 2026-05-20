@@ -1,0 +1,81 @@
+openapi: 3.0.1
+info:
+  title: DevLog API
+  description: DevLog API Documentation
+  version: 0.1.0
+servers:
+- url: http://localhost:8080
+tags: []
+paths:
+  /api/signup:
+    post:
+      tags:
+      - User
+      summary: 회원가입 API
+      description: 회원가입 API
+      operationId: user/signup
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+            examples:
+              user/signup:
+                value: "{\"email\":\"test@naver.com\",\"password\":\"testpw1234\"\
+                  ,\"name\":\"test\"}"
+      responses:
+        "201":
+          description: "201"
+          headers:
+            Location:
+              description: 리소스 위치
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignupResponse"
+              examples:
+                user/signup:
+                  value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
+                    :\"2026-05-20T22:54:15.2550617\"}"
+components:
+  schemas:
+    SignupResponse:
+      title: SignupResponse
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - userId
+          type: object
+          properties:
+            userId:
+              type: number
+              description: 생성된 사용자 ID
+        timestamp:
+          type: string
+          description: 응답 시간
+        status:
+          type: string
+          description: 응답 상태
+    SignupRequest:
+      title: SignupRequest
+      required:
+      - email
+      - name
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: 사용자 비밀번호
+        name:
+          type: string
+          description: 사용자 이름
+        email:
+          type: string
+          description: 사용자 이메일

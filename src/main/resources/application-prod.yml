@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@devlog_low
+    username: ${PROD_DB_USERNAME:DEVLOG}
+    password: ${PROD_DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      data-source-properties:
+        oracle.net.tns_admin: ${PROD_TNS_ADMIN:/app/wallet}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
+        order_inserts: true
+        order_updates: true
+        jdbc:
+          batch_size: 100
+    show-sql: true
+    database-platform: org.hibernate.dialect.OracleDialect
+
+  data:
+    redis:
+      host: ${PROD_REDIS_HOST:redis}
+      port: 6379
+
+    jwt:
+      secret-key: ${PROD_JWT_SECRET}
+      access-expiration-time: 1800000
+      refresh-expiration-time: 604800000
+      authorities-key: "roles"
+      token-prefix: "Bearer "
