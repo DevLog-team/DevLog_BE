@@ -40,7 +40,25 @@ paths:
                 $ref: "#/components/schemas/LoginResponse"
               examples:
                 로그인 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:07:43.6631269\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:31:38.9575093\"\
+                    }"
+  /api/logout:
+    post:
+      tags:
+      - Auth
+      summary: 로그아웃 API
+      description: 로그아웃 API
+      operationId: 로그아웃 성공
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: "#/components/schemas/api-logout229656191"
+              examples:
+                로그아웃 성공:
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:31:39.2115182\"\
                     }"
   /api/reissue:
     post:
@@ -64,10 +82,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reissue229656191"
+                $ref: "#/components/schemas/api-logout229656191"
               examples:
                 토큰 재발급 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:07:42.5227715\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:31:37.97475\"\
                     }"
         "401":
           description: "401"
@@ -78,7 +96,7 @@ paths:
               examples:
                 토큰 재발급 실패 - 리프레시 토큰이 만료 되었을 경우:
                   value: "{\"status\":\"ERROR\",\"body\":{\"status\":\"UNAUTHORIZED\"\
-                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-21T20:07:43.3160028\"\
+                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-21T20:31:38.6459018\"\
                     }"
   /api/signup:
     post:
@@ -111,7 +129,7 @@ paths:
               examples:
                 user/signup:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
-                    :\"2026-05-21T20:07:45.0049008\"}"
+                    :\"2026-05-21T20:31:40.1935475\"}"
 components:
   schemas:
     SignupResponse:
@@ -203,7 +221,7 @@ components:
         status:
           type: string
           description: 응답 상태
-    api-reissue229656191:
+    api-logout229656191:
       required:
       - body
       - status
