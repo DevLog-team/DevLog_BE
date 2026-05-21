@@ -1,0 +1,24 @@
+### 로그인
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "test@naver.com",
+  "password": "testpw1234"
+}
+
+> {%
+    const authHeader = response.headers.valueOf("Authorization");
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+        const accessToken = authHeader.substring(7);
+        client.global.set("accessToken", accessToken);
+        console.log("AccessToken 저장 완료:", accessToken);
+    } else {
+        console.error("Authorization 헤더가 존재하지 않거나 형식이 올바르지 않습니다.");
+    }
+%}
+
+### 로그아웃
+POST http://localhost:8080/api/logout
+Content-Type: application/json
