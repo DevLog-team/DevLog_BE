@@ -28,9 +28,9 @@ spring:
       host: ${PROD_REDIS_HOST:redis}
       port: 6379
 
-    jwt:
-      secret-key: ${PROD_JWT_SECRET}
-      access-expiration-time: 1800000
-      refresh-expiration-time: 604800000
-      authorities-key: "roles"
-      token-prefix: "Bearer "
+jwt:
+  secret-key: ${PROD_JWT_SECRET}
+  access-expiration-time: 1800000
+  refresh-expiration-time: 604800000
+  authorities-key: "roles"
+  token-prefix: "Bearer "
