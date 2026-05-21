@@ -1,0 +1,6 @@
+jwt:
+  secret-key: tesatdtaetqtsadfoiupzxicvpoawejtrklaasdfoiupzoxicvupioqwjerkljdasdafsasdasf
+  access-expiration-time: 150
+  refresh-expiration-time: 250000
+  authorities-key: "roles"
+  token-prefix: "Bearer "
