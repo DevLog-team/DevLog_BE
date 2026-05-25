@@ -27,14 +27,19 @@ public class ResponseUtil {
     private final ObjectMapper objectMapper;
 
     public void writeJsonSuccessResponse(HttpServletResponse response) {
-        ApiResponse<Void> body = createSuccessBody();
+        writeJsonSuccessResponse(response, null);
+    }
+
+    public <T> void writeJsonSuccessResponse(HttpServletResponse response, T data) {
+        ApiResponse<T> body = createSuccessBody(data);
         setResponseHeader(response, HttpStatus.OK);
         writeResponseBody(response, body);
     }
 
-    private ApiResponse<Void> createSuccessBody() {
-        return ApiResponse.<Void>builder()
+    private <T> ApiResponse<T> createSuccessBody(T data) {
+        return ApiResponse.<T>builder()
                 .status(ResponseStatus.SUCCESS)
+                .body(data)
                 .build();
     }
 

@@ -3,7 +3,7 @@ package com.project.devlog.domain.user.mock;
 import com.project.devlog.domain.user.dto.request.SignupRequest;
 import com.project.devlog.domain.user.entity.User;
 import com.project.devlog.domain.user.entity.enums.UserRole;
-import com.project.devlog.global.security.dto.LoginRequest;
+import com.project.devlog.global.security.dto.request.LoginRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

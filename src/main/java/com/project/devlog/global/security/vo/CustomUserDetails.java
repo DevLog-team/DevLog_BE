@@ -16,12 +16,14 @@ public class CustomUserDetails implements UserDetails {
     private final Long id;
     private final String email;
     private final String password;
+    private final String name;
     private final List<String> roles;
 
     public CustomUserDetails(Claims claims) {
         this.id = claims.get("id", Long.class);
         this.email = claims.getSubject();
         this.password = "";
+        this.name = "";
         this.roles = claims.get("roles", List.class);
     }
 
@@ -40,6 +42,8 @@ public class CustomUserDetails implements UserDetails {
     public String getEmail() {
         return email;
     }
+
+    public String getName() { return name;}
 
     @Override
     public String getPassword() {

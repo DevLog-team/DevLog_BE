@@ -24,7 +24,7 @@ import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.exception.errorcode.AuthErrorCode;
 import com.project.devlog.global.response.dto.ResponseStatus;
-import com.project.devlog.global.security.dto.LoginRequest;
+import com.project.devlog.global.security.dto.request.LoginRequest;
 import com.project.devlog.global.security.jwt.JwtProperties;
 import com.project.devlog.global.security.jwt.JwtProvider;
 import com.project.devlog.global.util.CookieUtils;
@@ -105,6 +105,9 @@ class AuthControllerTest {
             String authorizationHeader = perform
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.userId").isNumber())
+                    .andExpect(jsonPath("$.body.email").isString())
+                    .andExpect(jsonPath("$.body.name").isString())
                     .andExpect(jsonPath("$.timestamp").isString())
                     .andDo(document("로그인 성공",
                                     resource(
@@ -121,8 +124,12 @@ class AuthControllerTest {
                                                     .responseFields(
                                                             fieldWithPath("status").type(JsonFieldType.STRING)
                                                                     .description("응답 상태"),
-                                                            fieldWithPath("body").type(null)
-                                                                    .description("응답 데이타"),
+                                                            fieldWithPath("body.userId").type(JsonFieldType.NUMBER)
+                                                                    .description("사용자 ID"),
+                                                            fieldWithPath("body.email").type(JsonFieldType.STRING)
+                                                                    .description("사용자 이메일"),
+                                                            fieldWithPath("body.name").type(JsonFieldType.STRING)
+                                                                    .description("사용자 이름"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 시간"))
                                                     .responseHeaders(
