@@ -3,6 +3,7 @@ package com.project.devlog.global.config;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -16,9 +17,11 @@ public class CorsConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "https://dev-log-fe-kappa.vercel.app"
+                "https://dev-log-fe-kappa.vercel.app",
+                "https://dev-log-fe-git-develop-moonjinho99s-projects.vercel.app"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
+        configuration.setExposedHeaders(List.of(HttpHeaders.AUTHORIZATION));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
