@@ -1,4 +1,4 @@
-package com.project.devlog.global.security.dto;
+package com.project.devlog.global.security.dto.request;
 
 public record LoginRequest(
         String email,

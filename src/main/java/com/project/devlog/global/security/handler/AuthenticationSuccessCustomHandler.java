@@ -1,6 +1,7 @@
 package com.project.devlog.global.security.handler;
 
 import com.project.devlog.domain.auth.service.AuthService;
+import com.project.devlog.global.security.dto.response.LoginResponse;
 import com.project.devlog.global.security.jwt.JwtProvider;
 import com.project.devlog.global.security.vo.CustomUserDetails;
 import com.project.devlog.global.util.ResponseUtil;
@@ -34,7 +35,17 @@ public class AuthenticationSuccessCustomHandler implements AuthenticationSuccess
 
         authService.registerRefreshToken(userId, refreshToken);
 
+        LoginResponse body = buildBody(userDetails);
+
         responseUtil.addTokensToResponse(response, accessToken, refreshToken);
-        responseUtil.writeJsonSuccessResponse(response);
+        responseUtil.writeJsonSuccessResponse(response, body);
+    }
+
+    private LoginResponse buildBody(CustomUserDetails userDetails) {
+        return LoginResponse.builder()
+                .userId(userDetails.getUserId())
+                .email(userDetails.getEmail())
+                .name(userDetails.getName())
+                .build();
     }
 }

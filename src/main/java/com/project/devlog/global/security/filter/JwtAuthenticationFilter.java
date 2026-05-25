@@ -3,7 +3,7 @@ package com.project.devlog.global.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.CommonErrorCode;
-import com.project.devlog.global.security.dto.LoginRequest;
+import com.project.devlog.global.security.dto.request.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
