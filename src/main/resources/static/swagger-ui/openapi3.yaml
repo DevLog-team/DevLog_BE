@@ -40,7 +40,8 @@ paths:
                 $ref: "#/components/schemas/LoginResponse"
               examples:
                 로그인 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:31:38.9575093\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1,\"email\"\
+                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-05-25T15:57:14.8424577\"\
                     }"
   /api/logout:
     post:
@@ -55,10 +56,10 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: "#/components/schemas/api-logout229656191"
+                $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 로그아웃 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:31:39.2115182\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-25T15:57:15.1019085\"\
                     }"
   /api/reissue:
     post:
@@ -82,10 +83,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-logout229656191"
+                $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 토큰 재발급 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-21T20:31:37.97475\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-25T15:57:13.9093604\"\
                     }"
         "401":
           description: "401"
@@ -96,7 +97,7 @@ paths:
               examples:
                 토큰 재발급 실패 - 리프레시 토큰이 만료 되었을 경우:
                   value: "{\"status\":\"ERROR\",\"body\":{\"status\":\"UNAUTHORIZED\"\
-                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-21T20:31:38.6459018\"\
+                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-25T15:57:14.5435355\"\
                     }"
   /api/signup:
     post:
@@ -129,30 +130,9 @@ paths:
               examples:
                 user/signup:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
-                    :\"2026-05-21T20:31:40.1935475\"}"
+                    :\"2026-05-25T15:57:15.9965533\"}"
 components:
   schemas:
-    SignupResponse:
-      title: SignupResponse
-      required:
-      - status
-      - timestamp
-      type: object
-      properties:
-        body:
-          required:
-          - userId
-          type: object
-          properties:
-            userId:
-              type: number
-              description: 생성된 사용자 ID
-        timestamp:
-          type: string
-          description: 응답 시간
-        status:
-          type: string
-          description: 응답 상태
     api-reissue2116916718:
       required:
       - status
@@ -171,6 +151,27 @@ components:
             status:
               type: string
               description: 에러 상태
+        timestamp:
+          type: string
+          description: 응답 시간
+        status:
+          type: string
+          description: 응답 상태
+    SignupResponse:
+      title: SignupResponse
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - userId
+          type: object
+          properties:
+            userId:
+              type: number
+              description: 생성된 사용자 ID
         timestamp:
           type: string
           description: 응답 시간
@@ -210,18 +211,33 @@ components:
     LoginResponse:
       title: LoginResponse
       required:
-      - body
       - status
       - timestamp
       type: object
       properties:
+        body:
+          required:
+          - email
+          - name
+          - userId
+          type: object
+          properties:
+            name:
+              type: string
+              description: 사용자 이름
+            userId:
+              type: number
+              description: 사용자 ID
+            email:
+              type: string
+              description: 사용자 이메일
         timestamp:
           type: string
           description: 응답 시간
         status:
           type: string
           description: 응답 상태
-    api-logout229656191:
+    api-reissue229656191:
       required:
       - body
       - status

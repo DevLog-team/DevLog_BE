@@ -46,6 +46,7 @@ public class AuthService implements UserDetailsService {
                 .id(user.getId())
                 .email(user.getEmail())
                 .password(user.getPassword())
+                .name(user.getName())
                 .roles(List.of(user.getRole().name()))
                 .build();
     }
