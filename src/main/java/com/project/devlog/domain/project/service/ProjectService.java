@@ -1,0 +1,43 @@
+package com.project.devlog.domain.project.service;
+
+import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
+import com.project.devlog.domain.project.entity.Project;
+import com.project.devlog.domain.project.entity.ProjectUser;
+import com.project.devlog.domain.project.mapper.ProjectMapper;
+import com.project.devlog.domain.project.repository.ProjectRepository;
+import com.project.devlog.domain.project.repository.ProjectUserRepository;
+import com.project.devlog.domain.user.entity.User;
+import com.project.devlog.domain.user.repository.UserRepository;
+import com.project.devlog.global.exception.BusinessException;
+import com.project.devlog.global.exception.errorcode.UserErrorCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class ProjectService {
+
+    private final ProjectRepository projectRepository;
+    private final ProjectUserRepository projectUserRepository;
+    private final UserRepository userRepository;
+    private final ProjectMapper projectMapper;
+
+    @Transactional
+    public Long create(Long userId, CreateProjectRequest request) {
+        User user = findUserById(userId);
+        Project project = projectMapper.toProject(request);
+        ProjectUser projectUser = projectMapper.toProjectUser(project, user, request.role());
+
+        projectRepository.save(project);
+        projectUserRepository.save(projectUser);
+
+        return project.getId();
+    }
+
+    private User findUserById(Long userId) {
+        return userRepository.findByIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_EXIST_USER) );
+    }
+}
