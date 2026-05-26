@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.devlog.domain.auth.service.AuthService;
-import com.project.devlog.domain.user.controller.mapper.UserMapper;
+import com.project.devlog.domain.project.mapper.ProjectMapper;
+import com.project.devlog.domain.project.mock.ProjectMock;
+import com.project.devlog.domain.project.service.ProjectService;
+import com.project.devlog.domain.user.mapper.UserMapper;
 import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.domain.user.service.UserService;
@@ -118,5 +121,18 @@ public class AuthTestConfig {
     @Bean
     public UserMock userMock() {
         return new UserMock(passwordEncoder());
+    }
+
+    @Bean
+    public ProjectService projectService() { return Mockito.mock(ProjectService.class); }
+
+    @Bean
+    public ProjectMapper projectMapper() {
+        return new ProjectMapper();
+    }
+
+    @Bean
+    public ProjectMock projectMock() {
+        return new ProjectMock();
     }
 }

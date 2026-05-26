@@ -41,7 +41,7 @@ paths:
               examples:
                 로그인 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1,\"email\"\
-                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-05-25T15:57:14.8424577\"\
+                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-05-26T18:47:36.4361359\"\
                     }"
   /api/logout:
     post:
@@ -59,8 +59,36 @@ paths:
                 $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 로그아웃 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-25T15:57:15.1019085\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-26T18:47:36.6919273\"\
                     }"
+  /api/project:
+    post:
+      tags:
+      - Project
+      summary: 프로젝트 생성 API
+      description: 프로젝트 생성 API
+      operationId: 프로젝트 생성 성공
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/CreateProjectRequest"
+            examples:
+              프로젝트 생성 성공:
+                value: "{\"title\":\"테스트\",\"description\":\"테스트 입니다.\",\"status\"\
+                  :\"ACTIVE\",\"role\":\"OWNER\",\"startDate\":\"2026-05-26\",\"endDate\"\
+                  :\"2026-05-27\"}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateProjectResponse"
+              examples:
+                프로젝트 생성 성공:
+                  value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
+                    :\"2026-05-26T18:47:37.7731533\"}"
   /api/reissue:
     post:
       tags:
@@ -86,7 +114,7 @@ paths:
                 $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 토큰 재발급 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-25T15:57:13.9093604\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-26T18:47:35.4817952\"\
                     }"
         "401":
           description: "401"
@@ -97,7 +125,7 @@ paths:
               examples:
                 토큰 재발급 실패 - 리프레시 토큰이 만료 되었을 경우:
                   value: "{\"status\":\"ERROR\",\"body\":{\"status\":\"UNAUTHORIZED\"\
-                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-25T15:57:14.5435355\"\
+                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-26T18:47:36.1278299\"\
                     }"
   /api/signup:
     post:
@@ -130,7 +158,7 @@ paths:
               examples:
                 user/signup:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
-                    :\"2026-05-25T15:57:15.9965533\"}"
+                    :\"2026-05-26T18:47:38.2745706\"}"
 components:
   schemas:
     api-reissue2116916718:
@@ -195,6 +223,56 @@ components:
         email:
           type: string
           description: 사용자 이메일
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      required:
+      - description
+      - endDate
+      - role
+      - startDate
+      - status
+      - title
+      type: object
+      properties:
+        role:
+          type: string
+          description: 프로젝트 사용자 권한
+        endDate:
+          type: string
+          description: 프로젝트 종료일
+        description:
+          type: string
+          description: 프로젝트 간략 설명
+        title:
+          type: string
+          description: 프로젝트 제목
+        startDate:
+          type: string
+          description: 프로젝트 시작일
+        status:
+          type: string
+          description: 프로젝트 상태
+    CreateProjectResponse:
+      title: CreateProjectResponse
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - projectId
+          type: object
+          properties:
+            projectId:
+              type: number
+              description: 프로젝트 ID
+        timestamp:
+          type: string
+          description: 응답 시간
+        status:
+          type: string
+          description: 응답 상태
     LoginRequest:
       title: LoginRequest
       required:

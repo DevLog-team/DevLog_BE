@@ -1,0 +1,13 @@
+### 프로젝트 생성
+POST http://localhost:8080/api/project
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "테스트",
+  "description": "테스트입니다.",
+  "status": "ACTIVE",
+  "role": "OWNER",
+  "startDate": "2026-05-26",
+  "endDate": "2026-06-30"
+}
