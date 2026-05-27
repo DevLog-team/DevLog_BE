@@ -17,9 +17,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
 import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
 import com.project.devlog.domain.project.dto.response.ProjectListResponse;
+import com.project.devlog.domain.project.dto.response.ProjectResponse;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
+import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.mock.ProjectMock;
 import com.project.devlog.domain.project.service.ProjectService;
 import com.project.devlog.global.config.AuthTestConfig;
@@ -159,40 +161,135 @@ class ProjectControllerTest {
                                                     .tag("Project")
                                                     .description("프로젝트 목록 조회 API(페이징 및 동적 검색을 지원)")
                                                     .queryParameters(
-                                                            parameterWithName("title").description("프로젝트 제목 검색 키워드 (부분 일치)").optional(),
+                                                            parameterWithName("title").description("프로젝트 제목 검색 키워드 (부분 일치)")
+                                                                    .optional(),
                                                             // 💡 status 제약 조건 명시 추가
-                                                            parameterWithName("status").description("프로젝트 상태 필터링").optional()
-                                                                    .attributes(key("constraints").value("ACTIVE, COMPLETED, ARCHIVED (ALL 혹은 미입력 시 전체 조회)")),
-                                                            parameterWithName("page").description("페이지 번호 (0부터 시작, 기본값: 0)").optional(),
-                                                            parameterWithName("size").description("한 페이지 당 조회 개수 (기본값: 10)").optional(),
-                                                            parameterWithName("sort").description("정렬 기준 및 방향 (기본값: createdAt,desc)").optional()
+                                                            parameterWithName("status").description(
+                                                                            "프로젝트 상태 필터링(ALL, ACTIVE, COMPLETED, ARCHIVED)").optional()
+                                                                    .attributes(key("constraints").value(
+                                                                            "ACTIVE, COMPLETED, ARCHIVED (ALL 혹은 미입력 시 전체 조회)")),
+                                                            parameterWithName("page").description("페이지 번호 (0부터 시작, 기본값: 0)")
+                                                                    .optional(),
+                                                            parameterWithName("size").description("한 페이지 당 조회 개수 (기본값: 10)")
+                                                                    .optional(),
+                                                            parameterWithName("sort").description(
+                                                                    "정렬 기준 및 방향 (기본값: createdAt,desc)").optional()
                                                     )
                                                     .responseSchema(Schema.schema("ProjectListResponse"))
                                                     .responseFields(
-                                                            fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
 
                                                             // content 내부 배열 스펙 명시
-                                                            fieldWithPath("body.content[]").type(JsonFieldType.ARRAY).description("프로젝트 목록 데이터"),
-                                                            fieldWithPath("body.content[].projectId").type(JsonFieldType.NUMBER).description("프로젝트 고유 ID"),
-                                                            fieldWithPath("body.content[].title").type(JsonFieldType.STRING).description("프로젝트 제목"),
-                                                            fieldWithPath("body.content[].description").type(JsonFieldType.STRING).description("프로젝트 상세 설명"),
-                                                            fieldWithPath("body.content[].status").type(JsonFieldType.STRING).description("프로젝트 상태 (ACTIVE, COMPLETED, ARCHIVED)"),
-                                                            fieldWithPath("body.content[].endDate").type(JsonFieldType.STRING).description("프로젝트 마감일 (YYYY-MM-DD)"),
-                                                            fieldWithPath("body.content[].totalTaskCount").type(JsonFieldType.NUMBER).description("총 태스크 개수"),
-                                                            fieldWithPath("body.content[].completedTaskCount").type(JsonFieldType.NUMBER).description("완료된 태스크 개수"),
-                                                            fieldWithPath("body.content[].inProgressTaskCount").type(JsonFieldType.NUMBER).description("진행 중인 태스크 개수"),
-                                                            fieldWithPath("body.content[].progressRate").type(JsonFieldType.NUMBER).description("프로젝트 전체 진척률 (%)"),
+                                                            fieldWithPath("body.content[]").type(JsonFieldType.ARRAY)
+                                                                    .description("프로젝트 목록 데이터"),
+                                                            fieldWithPath("body.content[].projectId").type(JsonFieldType.NUMBER)
+                                                                    .description("프로젝트 고유 ID"),
+                                                            fieldWithPath("body.content[].title").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 제목"),
+                                                            fieldWithPath("body.content[].description").type(
+                                                                    JsonFieldType.STRING).description("프로젝트 상세 설명"),
+                                                            fieldWithPath("body.content[].status").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 상태 (ACTIVE, COMPLETED, ARCHIVED)"),
+                                                            fieldWithPath("body.content[].endDate").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 마감일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.content[].totalTaskCount").type(
+                                                                    JsonFieldType.NUMBER).description("총 태스크 개수"),
+                                                            fieldWithPath("body.content[].completedTaskCount").type(
+                                                                    JsonFieldType.NUMBER).description("완료된 태스크 개수"),
+                                                            fieldWithPath("body.content[].inProgressTaskCount").type(
+                                                                    JsonFieldType.NUMBER).description("진행 중인 태스크 개수"),
+                                                            fieldWithPath("body.content[].progressRate").type(
+                                                                    JsonFieldType.NUMBER).description("프로젝트 전체 진척률 (%)"),
 
                                                             // pageInfo 페이징 데이터 스펙 명시
-                                                            fieldWithPath("body.pageInfo").type(JsonFieldType.OBJECT).description("페이징 메타데이터"),
-                                                            fieldWithPath("body.pageInfo.currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호 (1-indexed)"),
-                                                            fieldWithPath("body.pageInfo.pageSize").type(JsonFieldType.NUMBER).description("페이지 당 노출 데이터 개수"),
-                                                            fieldWithPath("body.pageInfo.totalElements").type(JsonFieldType.NUMBER).description("총 데이터 개수"),
-                                                            fieldWithPath("body.pageInfo.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
-                                                            fieldWithPath("body.pageInfo.isFirst").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
-                                                            fieldWithPath("body.pageInfo.isLast").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+                                                            fieldWithPath("body.pageInfo").type(JsonFieldType.OBJECT)
+                                                                    .description("페이징 메타데이터"),
+                                                            fieldWithPath("body.pageInfo.currentPage").type(
+                                                                    JsonFieldType.NUMBER).description("현재 페이지 번호 (1-indexed)"),
+                                                            fieldWithPath("body.pageInfo.pageSize").type(JsonFieldType.NUMBER)
+                                                                    .description("페이지 당 노출 데이터 개수"),
+                                                            fieldWithPath("body.pageInfo.totalElements").type(
+                                                                    JsonFieldType.NUMBER).description("총 데이터 개수"),
+                                                            fieldWithPath("body.pageInfo.totalPages").type(JsonFieldType.NUMBER)
+                                                                    .description("총 페이지 수"),
+                                                            fieldWithPath("body.pageInfo.isFirst").type(JsonFieldType.BOOLEAN)
+                                                                    .description("첫 페이지 여부"),
+                                                            fieldWithPath("body.pageInfo.isLast").type(JsonFieldType.BOOLEAN)
+                                                                    .description("마지막 페이지 여부"),
 
-                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간")
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 단건 상세 조회 테스트")
+    class GetDetail {
+        @Test
+        @DisplayName("성공: 프로젝트 ID로 상세 정보 및 작업 통계 데이터를 반환")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long projectId = 1L;
+            ProjectProjection mockProjection = projectMock.projectProjectionMock();
+
+            given(projectService.getDetail(anyLong(), anyLong())).willReturn(mockProjection);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get("/api/projects/{projectId}", projectId)
+                            .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body").isNotEmpty())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("프로젝트 단건 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Project")
+                                                    .description("프로젝트 단건 조회 API")
+                                                    .pathParameters(
+                                                            parameterWithName("projectId").description("조회할 프로젝트의 고유 식별 ID")
+                                                    )
+                                                    .responseSchema(Schema.schema("ProjectResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
+
+                                                            fieldWithPath("body.projectId").type(JsonFieldType.NUMBER)
+                                                                    .description("프로젝트 고유 ID"),
+                                                            fieldWithPath("body.title").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 제목"),
+                                                            fieldWithPath("body.description").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 상세 설명"),
+                                                            fieldWithPath("body.status").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 진행 상태 (ACTIVE, COMPLETED, ARCHIVED)"),
+                                                            fieldWithPath("body.startDate").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 개시일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.endDate").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 마감일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.memberCount").type(JsonFieldType.NUMBER)
+                                                                    .description("프로젝트에 참가하고 있는 팀원 수"),
+                                                            fieldWithPath("body.totalTaskCount").type(JsonFieldType.NUMBER)
+                                                                    .description("등록된 전체 태스크 개수"),
+                                                            fieldWithPath("body.completedTaskCount").type(JsonFieldType.NUMBER)
+                                                                    .description("완료 처리된 태스크 개수"),
+                                                            fieldWithPath("body.inProgressTaskCount").type(JsonFieldType.NUMBER)
+                                                                    .description("현재 진행 중인 태스크 개수"),
+                                                            fieldWithPath("body.delayedTaskCount").type(JsonFieldType.NUMBER)
+                                                                    .description("기한이 지나 지연된 태스크 개수"),
+
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간")
                                                     )
                                                     .build()
                                     )

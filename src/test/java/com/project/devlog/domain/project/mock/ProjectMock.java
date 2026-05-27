@@ -7,6 +7,7 @@ import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.entity.enums.ProjectUserRole;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
+import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.global.response.dto.PageInfo;
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +29,7 @@ public class ProjectMock {
     private final long totalTaskCount = 10L;
     private final long completedTaskCount = 6L;
     private final long inProgressTaskCount = 4L;
+    private final long delayedTaskCount = 2L;
     private final double progressRate = 60.0;
 
     /**
@@ -94,5 +96,21 @@ public class ProjectMock {
 
         PageInfo pageInfo = new PageInfo(1, 10, 1, 1, true, true);
         return new ProjectListResponse(List.of(summary), pageInfo);
+    }
+
+    public ProjectProjection projectProjectionMock() {
+        return new ProjectProjection(
+                projectId,
+                title,
+                description,
+                status,
+                startDate,
+                endDate,
+                2L,
+                totalTaskCount,
+                completedTaskCount,
+                inProgressTaskCount,
+                delayedTaskCount
+        );
     }
 }
