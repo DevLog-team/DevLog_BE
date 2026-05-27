@@ -6,15 +6,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
+import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
+import com.project.devlog.domain.project.dto.response.ProjectListResponse;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
+import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
 import com.project.devlog.domain.project.mock.ProjectMock;
 import com.project.devlog.domain.project.service.ProjectService;
 import com.project.devlog.global.config.AuthTestConfig;
@@ -27,6 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -105,6 +113,87 @@ class ProjectControllerTest {
                                                                     .description("프로젝트 ID"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 시간"))
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 목록 조회 테스트")
+    class GetList {
+        @Test
+        @DisplayName("성공: 검색 조건 및 페이징이 반영된 프로젝트 목록 반환")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Pageable pageable = PageRequest.of(0, 10);
+
+            // 🚀 ProjectMock을 활용하여 데이터 바인딩 통합 관리
+            Page<ProjectListProjection> mockPage = projectMock.pageProjectionMock(pageable);
+
+            given(projectService.getList(anyLong(), any(ProjectSearchCondition.class), any(Pageable.class)))
+                    .willReturn(mockPage);
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/projects")
+                    .param("title", "스프링부트")
+                    .param("status", "ACTIVE") // 💡 특정 조건 필터링 검증용 파라미터 주입
+                    .param("page", "0")
+                    .param("size", "10")
+                    .param("sort", "createdAt,desc")
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.content").isArray())
+                    .andExpect(jsonPath("$.body.pageInfo.currentPage").value(1))
+                    .andExpect(jsonPath("$.body.pageInfo.pageSize").value(10))
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("프로젝트 목록 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Project")
+                                                    .description("프로젝트 목록 조회 API(페이징 및 동적 검색을 지원)")
+                                                    .queryParameters(
+                                                            parameterWithName("title").description("프로젝트 제목 검색 키워드 (부분 일치)").optional(),
+                                                            // 💡 status 제약 조건 명시 추가
+                                                            parameterWithName("status").description("프로젝트 상태 필터링").optional()
+                                                                    .attributes(key("constraints").value("ACTIVE, COMPLETED, ARCHIVED (ALL 혹은 미입력 시 전체 조회)")),
+                                                            parameterWithName("page").description("페이지 번호 (0부터 시작, 기본값: 0)").optional(),
+                                                            parameterWithName("size").description("한 페이지 당 조회 개수 (기본값: 10)").optional(),
+                                                            parameterWithName("sort").description("정렬 기준 및 방향 (기본값: createdAt,desc)").optional()
+                                                    )
+                                                    .responseSchema(Schema.schema("ProjectListResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING).description("응답 상태"),
+
+                                                            // content 내부 배열 스펙 명시
+                                                            fieldWithPath("body.content[]").type(JsonFieldType.ARRAY).description("프로젝트 목록 데이터"),
+                                                            fieldWithPath("body.content[].projectId").type(JsonFieldType.NUMBER).description("프로젝트 고유 ID"),
+                                                            fieldWithPath("body.content[].title").type(JsonFieldType.STRING).description("프로젝트 제목"),
+                                                            fieldWithPath("body.content[].description").type(JsonFieldType.STRING).description("프로젝트 상세 설명"),
+                                                            fieldWithPath("body.content[].status").type(JsonFieldType.STRING).description("프로젝트 상태 (ACTIVE, COMPLETED, ARCHIVED)"),
+                                                            fieldWithPath("body.content[].endDate").type(JsonFieldType.STRING).description("프로젝트 마감일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.content[].totalTaskCount").type(JsonFieldType.NUMBER).description("총 태스크 개수"),
+                                                            fieldWithPath("body.content[].completedTaskCount").type(JsonFieldType.NUMBER).description("완료된 태스크 개수"),
+                                                            fieldWithPath("body.content[].inProgressTaskCount").type(JsonFieldType.NUMBER).description("진행 중인 태스크 개수"),
+                                                            fieldWithPath("body.content[].progressRate").type(JsonFieldType.NUMBER).description("프로젝트 전체 진척률 (%)"),
+
+                                                            // pageInfo 페이징 데이터 스펙 명시
+                                                            fieldWithPath("body.pageInfo").type(JsonFieldType.OBJECT).description("페이징 메타데이터"),
+                                                            fieldWithPath("body.pageInfo.currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호 (1-indexed)"),
+                                                            fieldWithPath("body.pageInfo.pageSize").type(JsonFieldType.NUMBER).description("페이지 당 노출 데이터 개수"),
+                                                            fieldWithPath("body.pageInfo.totalElements").type(JsonFieldType.NUMBER).description("총 데이터 개수"),
+                                                            fieldWithPath("body.pageInfo.totalPages").type(JsonFieldType.NUMBER).description("총 페이지 수"),
+                                                            fieldWithPath("body.pageInfo.isFirst").type(JsonFieldType.BOOLEAN).description("첫 페이지 여부"),
+                                                            fieldWithPath("body.pageInfo.isLast").type(JsonFieldType.BOOLEAN).description("마지막 페이지 여부"),
+
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING).description("응답 시간")
+                                                    )
                                                     .build()
                                     )
                             )
