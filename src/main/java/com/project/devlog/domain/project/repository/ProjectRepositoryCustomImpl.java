@@ -6,14 +6,18 @@ import static com.project.devlog.domain.project.entity.QProjectUser.projectUser;
 import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
+import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.entity.projection.QProjectListProjection;
+import com.project.devlog.domain.project.entity.projection.QProjectProjection;
 import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.ProjectErrorCode;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,5 +88,43 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
         } catch (IllegalArgumentException e) {
             throw new BusinessException(ProjectErrorCode.INVALID_PROJECT_STATUS);
         }
+    }
+
+    @Override
+    public Optional<ProjectProjection> findProjectDetail(Long userId, Long projectId) {
+        ProjectProjection result = queryFactory
+                .select(new QProjectProjection(
+                        project.id,
+                        project.title,
+                        project.description,
+                        project.status,
+                        project.startDate,
+                        project.endDate,
+
+                        JPAExpressions
+                                .select(projectUser.count())
+                                .from(projectUser)
+                                .where(
+                                        projectUser.project.id.eq(projectId),
+                                        projectUser.isDeleted.isFalse()
+                                ),
+
+                        Expressions.constant(0L), // 총 작업 수 임시
+                        Expressions.constant(0L), // 완료 작업 수 임시
+                        Expressions.constant(0L), // 진행중 작업 수 임시
+                        Expressions.constant(0L)  // 지연된 작업 수 임시
+
+                ))
+                .from(project)
+                .join(projectUser).on(projectUser.project.id.eq(project.id))
+                .where(
+                        projectUser.user.id.eq(userId),
+                        projectUser.isDeleted.isFalse(),
+                        project.id.eq(projectId),
+                        project.isDeleted.isFalse()
+                )
+                .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }

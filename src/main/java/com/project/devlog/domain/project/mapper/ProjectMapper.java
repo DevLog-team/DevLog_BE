@@ -1,6 +1,8 @@
 package com.project.devlog.domain.project.mapper;
 
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
+import com.project.devlog.domain.project.dto.response.ProjectResponse;
+import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.global.response.dto.PageInfo;
 import com.project.devlog.domain.project.dto.response.ProjectIdResponse;
 import com.project.devlog.domain.project.dto.response.ProjectListResponse;
@@ -38,7 +40,7 @@ public class ProjectMapper {
                 .build();
     }
 
-    public ProjectListResponse toProjectList(Page<ProjectListProjection> projectList) {
+    public ProjectListResponse toProjectListResponse(Page<ProjectListProjection> projectList) {
         List<ProjectSummaryResponse> content = projectList.getContent().stream().map(project -> {
             return new ProjectSummaryResponse(
                     project.projectId(),
@@ -65,4 +67,19 @@ public class ProjectMapper {
         return new ProjectListResponse(content, pageInfo);
     }
 
+    public ProjectResponse toProjectResponse(ProjectProjection project) {
+        return new ProjectResponse(
+                project.projectId(),
+                project.title(),
+                project.description(),
+                project.status(),
+                project.startDate(),
+                project.endDate(),
+                project.memberCount(),
+                project.totalTaskCount(),
+                project.completedTaskCount(),
+                project.inProgressTaskCount(),
+                project.delayedTaskCount()
+        );
+    }
 }

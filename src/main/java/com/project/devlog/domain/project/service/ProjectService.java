@@ -5,12 +5,14 @@ import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.ProjectUser;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
+import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.mapper.ProjectMapper;
 import com.project.devlog.domain.project.repository.ProjectRepository;
 import com.project.devlog.domain.project.repository.ProjectUserRepository;
 import com.project.devlog.domain.user.entity.User;
 import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.global.exception.BusinessException;
+import com.project.devlog.global.exception.errorcode.ProjectErrorCode;
 import com.project.devlog.global.exception.errorcode.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -47,5 +49,10 @@ public class ProjectService {
 
     public Page<ProjectListProjection> getList(Long userId, ProjectSearchCondition condition, Pageable pageable) {
         return projectRepository.searchUserProjects(userId, condition, pageable);
+    }
+
+    public ProjectProjection getDetail(Long userId, Long projectId) {
+        return projectRepository.findProjectDetail(userId, projectId)
+                .orElseThrow(() -> new BusinessException(ProjectErrorCode.PROJECT_NOT_FOUND));
     }
 }

@@ -4,7 +4,9 @@ import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
 import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
 import com.project.devlog.domain.project.dto.response.ProjectIdResponse;
 import com.project.devlog.domain.project.dto.response.ProjectListResponse;
+import com.project.devlog.domain.project.dto.response.ProjectResponse;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
+import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.mapper.ProjectMapper;
 import com.project.devlog.domain.project.service.ProjectService;
 import com.project.devlog.global.annotation.CurrentUser;
@@ -19,6 +21,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,7 +52,16 @@ public class ProjectController {
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable)
     {
         Page<ProjectListProjection> projectList = projectService.getList(userId, condition, pageable);
-        return ResponseEntity.ok().body(projectMapper.toProjectList(projectList));
+        return ResponseEntity.ok().body(projectMapper.toProjectListResponse(projectList));
+    }
+
+    @GetMapping("/api/projects/{projectId}")
+    public ResponseEntity<ProjectResponse> getDetail(
+            @CurrentUser Long userId,
+            @PathVariable Long projectId
+    ) {
+        ProjectProjection project = projectService.getDetail(userId, projectId);
+        return ResponseEntity.ok().body(projectMapper.toProjectResponse(project));
     }
 
 }
