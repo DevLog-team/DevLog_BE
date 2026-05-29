@@ -7,8 +7,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
@@ -16,8 +16,7 @@ import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
 import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
-import com.project.devlog.domain.project.dto.response.ProjectListResponse;
-import com.project.devlog.domain.project.dto.response.ProjectResponse;
+import com.project.devlog.domain.project.dto.request.UpdateProjectRequest;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
@@ -27,6 +26,7 @@ import com.project.devlog.domain.project.service.ProjectService;
 import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
+import com.project.devlog.global.security.evaluator.ProjectSecurityEvaluator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,6 +59,9 @@ class ProjectControllerTest {
 
     @Autowired
     private ProjectService projectService;
+
+    @Autowired
+    private ProjectSecurityEvaluator projectSecurityEvaluator;
 
     @Nested
     @DisplayName("프로젝트 생성 테스트")
@@ -100,8 +103,6 @@ class ProjectControllerTest {
                                                                     .description("프로젝트 간략 설명"),
                                                             fieldWithPath("status").type(JsonFieldType.STRING)
                                                                     .description("프로젝트 상태"),
-                                                            fieldWithPath("role").type(JsonFieldType.STRING)
-                                                                    .description("프로젝트 사용자 권한"),
                                                             fieldWithPath("startDate").type(JsonFieldType.STRING)
                                                                     .description("프로젝트 시작일"),
                                                             fieldWithPath("endDate").type(JsonFieldType.STRING)
@@ -288,6 +289,75 @@ class ProjectControllerTest {
                                                             fieldWithPath("body.delayedTaskCount").type(JsonFieldType.NUMBER)
                                                                     .description("기한이 지나 지연된 태스크 개수"),
 
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 수정 테스트")
+    class Update {
+        @Test
+        @DisplayName("성공: 프로젝트 OWNER 권한 검증 통과 후 성공적으로 프로젝트를 수정하고 ID를 반환한다")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long projectId = 1L;
+            UpdateProjectRequest requestDto = projectMock.updateRequestMock();
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            given(projectSecurityEvaluator.isOwner(anyLong(), anyLong())).willReturn(true);
+
+            given(projectService.update(anyLong(), any(UpdateProjectRequest.class)))
+                    .willReturn(projectId);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.put("/api/projects/{projectId}", projectId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.projectId").value(projectId))
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("프로젝트 수정 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Project")
+                                                    .description("프로젝트 전체 정보 수정 API (OWNER 권한 필수)")
+                                                    .pathParameters(
+                                                            parameterWithName("projectId").description("수정할 프로젝트의 고유 식별 ID")
+                                                    )
+                                                    .requestSchema(Schema.schema("UpdateProjectRequest"))
+                                                    .requestFields(
+                                                            fieldWithPath("title").type(JsonFieldType.STRING)
+                                                                    .description("변경할 프로젝트 제목 (공백 불가)"),
+                                                            fieldWithPath("description").type(JsonFieldType.STRING)
+                                                                    .description("변경할 프로젝트 간략 설명 (500자 이내)")
+                                                                    .optional(),
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description(
+                                                                            "변경할 프로젝트 진행 상태 (ACTIVE, COMPLETED, ARCHIVED)"),
+                                                            fieldWithPath("startDate").type(JsonFieldType.STRING)
+                                                                    .description("변경할 프로젝트 시작일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("endDate").type(JsonFieldType.STRING)
+                                                                    .description("변경할 프로젝트 종료일 (YYYY-MM-DD)")
+                                                    )
+                                                    .responseSchema(Schema.schema("UpdateProjectResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
+                                                            fieldWithPath("body.projectId").type(JsonFieldType.NUMBER)
+                                                                    .description("수정 완료된 프로젝트 고유 ID"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 시간")
                                                     )

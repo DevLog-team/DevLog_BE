@@ -20,3 +20,16 @@ Authorization: Bearer {{accessToken}}
 ### 프로젝트 단건 조회
 GET http://localhost:8080/api/projects/1
 Authorization: Bearer {{accessToken}}
+
+### 프로젝트 수정
+PUT http://localhost:8080/api/projects/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "수정 테스트",
+  "description": "수정 테스트입니다.",
+  "status": "COMPLETED",
+  "startDate": "2026-05-27",
+  "endDate": "2026-06-29"
+}

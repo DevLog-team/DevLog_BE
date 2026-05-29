@@ -1,6 +1,7 @@
 package com.project.devlog.domain.project.mock;
 
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
+import com.project.devlog.domain.project.dto.request.UpdateProjectRequest;
 import com.project.devlog.domain.project.dto.response.ProjectListResponse;
 import com.project.devlog.domain.project.dto.response.ProjectSummaryResponse;
 import com.project.devlog.domain.project.entity.Project;
@@ -32,9 +33,6 @@ public class ProjectMock {
     private final long delayedTaskCount = 2L;
     private final double progressRate = 60.0;
 
-    /**
-     * 기본 프로젝트 도메인 엔티티 Mock
-     */
     public Project domainMock(ProjectStatus status) {
         return Project.builder()
                 .id(projectId)
@@ -46,15 +44,11 @@ public class ProjectMock {
                 .build();
     }
 
-    /**
-     * 프로젝트 생성 요청 DTO Mock
-     */
     public CreateProjectRequest createRequestMock() {
         return new CreateProjectRequest(
                 title,
                 description,
                 ProjectStatus.ACTIVE,
-                ProjectUserRole.OWNER,
                 startDate,
                 endDate
         );
@@ -78,9 +72,6 @@ public class ProjectMock {
         return new PageImpl<>(content, pageable, 1);
     }
 
-    /**
-     * 최종 API 응답용 DTO (ProjectListResponse) Mock
-     */
     public ProjectListResponse listResponseMock() {
         ProjectSummaryResponse summary = new ProjectSummaryResponse(
                 projectId,
@@ -111,6 +102,16 @@ public class ProjectMock {
                 completedTaskCount,
                 inProgressTaskCount,
                 delayedTaskCount
+        );
+    }
+
+    public UpdateProjectRequest updateRequestMock() {
+        return new UpdateProjectRequest(
+                "수정된 프로젝트 제목",
+                "수정된 상세 설명입니다.",
+                ProjectStatus.COMPLETED,
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusMonths(1)
         );
     }
 }

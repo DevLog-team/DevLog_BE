@@ -12,6 +12,7 @@ import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.domain.user.service.UserService;
 import com.project.devlog.global.cache.RedisRepository;
+import com.project.devlog.global.security.evaluator.ProjectSecurityEvaluator;
 import com.project.devlog.global.security.handler.AccessDeniedCustomHandler;
 import com.project.devlog.global.security.handler.AuthenticationEntryPointCustom;
 import com.project.devlog.global.security.handler.AuthenticationFailureCustomHandler;
@@ -81,6 +82,11 @@ public class AuthTestConfig {
     @Bean
     public LogoutSuccessCustomHandler logoutSuccessCustomHandler() {
         return new LogoutSuccessCustomHandler(authService(), responseUtil(), cookieUtils(), jwtProvider());
+    }
+
+    @Bean(name = "projectSecurity")
+    public ProjectSecurityEvaluator projectSecurityEvaluator() {
+        return Mockito.mock(ProjectSecurityEvaluator.class);
     }
 
     @Bean
