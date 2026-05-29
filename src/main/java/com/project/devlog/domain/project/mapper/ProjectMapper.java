@@ -1,7 +1,7 @@
 package com.project.devlog.domain.project.mapper;
 
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
-import com.project.devlog.domain.project.dto.response.ProjectResponse;
+import com.project.devlog.domain.project.dto.response.ProjectDetailResponse;
 import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.global.response.dto.PageInfo;
 import com.project.devlog.domain.project.dto.response.ProjectIdResponse;
@@ -67,8 +67,8 @@ public class ProjectMapper {
         return new ProjectListResponse(content, pageInfo);
     }
 
-    public ProjectResponse toProjectResponse(ProjectProjection project) {
-        return new ProjectResponse(
+    public ProjectDetailResponse ProjectDetailResponse(ProjectProjection project) {
+        return new ProjectDetailResponse(
                 project.projectId(),
                 project.title(),
                 project.description(),

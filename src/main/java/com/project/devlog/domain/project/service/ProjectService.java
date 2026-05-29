@@ -2,8 +2,10 @@ package com.project.devlog.domain.project.service;
 
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
 import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
+import com.project.devlog.domain.project.dto.request.UpdateProjectRequest;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.ProjectUser;
+import com.project.devlog.domain.project.entity.enums.ProjectUserRole;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
 import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.mapper.ProjectMapper;
@@ -34,7 +36,7 @@ public class ProjectService {
     public Long create(Long userId, CreateProjectRequest request) {
         User user = findUserById(userId);
         Project project = projectMapper.toProject(request);
-        ProjectUser projectUser = projectMapper.toProjectUser(project, user, request.role());
+        ProjectUser projectUser = projectMapper.toProjectUser(project, user, ProjectUserRole.OWNER);
 
         projectRepository.save(project);
         projectUserRepository.save(projectUser);
@@ -54,5 +56,18 @@ public class ProjectService {
     public ProjectProjection getDetail(Long userId, Long projectId) {
         return projectRepository.findProjectDetail(userId, projectId)
                 .orElseThrow(() -> new BusinessException(ProjectErrorCode.PROJECT_NOT_FOUND));
+    }
+
+    @Transactional
+    public Long update(Long projectId, UpdateProjectRequest request) {
+        Project project = findProjectById(projectId);
+        project.update(request.title(), request.description(), request.status(), request.startDate(), request.endDate());
+        return project.getId();
+    }
+
+    private Project findProjectById(Long projectId) {
+        return projectRepository.findProjectByIdAndIsDeletedFalse(projectId)
+                .orElseThrow(() -> new BusinessException(ProjectErrorCode.PROJECT_NOT_FOUND));
+
     }
 }

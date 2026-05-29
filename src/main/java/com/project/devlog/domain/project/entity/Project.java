@@ -36,6 +36,7 @@ public class Project extends BaseDateTime {
 
     private String description;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
@@ -51,7 +52,8 @@ public class Project extends BaseDateTime {
     private boolean isDeleted = false;
 
     @Builder
-    private Project(Long id, String title, String description, ProjectStatus status, LocalDate startDate, LocalDate endDate) {
+    private Project(Long id, String title, String description, ProjectStatus status, LocalDate startDate,
+                    LocalDate endDate) {
         validateDates(startDate, endDate);
 
         this.id = id;
@@ -63,8 +65,22 @@ public class Project extends BaseDateTime {
     }
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            throw new BusinessException(ProjectErrorCode.PROJECT_DATE_REQUIRED);
+        }
+
         if (endDate.isBefore(startDate)) {
             throw new BusinessException(ProjectErrorCode.INVALID_PROJECT_DATE);
         }
+    }
+
+    public void update(String title, String description, ProjectStatus status, LocalDate startDate, LocalDate endDate) {
+        validateDates(startDate, endDate);
+
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }
