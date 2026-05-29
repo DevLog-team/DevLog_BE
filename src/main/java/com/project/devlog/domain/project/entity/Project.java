@@ -83,4 +83,8 @@ public class Project extends BaseDateTime {
         this.startDate = startDate;
         this.endDate = endDate;
     }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }

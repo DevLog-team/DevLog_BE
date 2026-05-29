@@ -6,7 +6,6 @@ import com.project.devlog.domain.project.dto.request.UpdateProjectRequest;
 import com.project.devlog.domain.project.dto.response.ProjectDetailResponse;
 import com.project.devlog.domain.project.dto.response.ProjectIdResponse;
 import com.project.devlog.domain.project.dto.response.ProjectListResponse;
-import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
 import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.mapper.ProjectMapper;
@@ -23,6 +22,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,5 +81,15 @@ public class ProjectController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.LOCATION, location.toString())
                 .body(projectMapper.toIdDTo(updateProjectId));
+    }
+
+    @DeleteMapping("/api/projects/{projectId}")
+    @PreAuthorize("@projectSecurity.isOwner(#projectId, #userId)")
+    public ResponseEntity<Void> delete(
+            @CurrentUser Long userId,
+            @PathVariable Long projectId
+    ) {
+        projectService.delete(projectId);
+        return ResponseEntity.ok().build();
     }
 }

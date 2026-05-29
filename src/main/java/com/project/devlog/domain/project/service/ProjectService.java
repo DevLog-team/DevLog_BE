@@ -16,6 +16,7 @@ import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.ProjectErrorCode;
 import com.project.devlog.global.exception.errorcode.UserErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,5 +70,17 @@ public class ProjectService {
         return projectRepository.findProjectByIdAndIsDeletedFalse(projectId)
                 .orElseThrow(() -> new BusinessException(ProjectErrorCode.PROJECT_NOT_FOUND));
 
+    }
+
+    @Transactional
+    public void delete(Long projectId) {
+        Project project = findProjectById(projectId);
+        List<ProjectUser> projectUsers = findProjectUserByProjectId(project.getId());
+        project.delete();
+        projectUsers.forEach(ProjectUser::delete);
+    }
+
+    private List<ProjectUser> findProjectUserByProjectId(Long projectId) {
+        return projectUserRepository.findByProjectIdAndIsDeletedFalse(projectId);
     }
 }

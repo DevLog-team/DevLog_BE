@@ -60,4 +60,8 @@ public class ProjectUser {
             user.getProjectUsers().add(this);
         }
     }
+
+    public void delete() {
+        isDeleted = true;
+    }
 }
