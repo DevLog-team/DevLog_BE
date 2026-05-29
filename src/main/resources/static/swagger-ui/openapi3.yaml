@@ -41,7 +41,7 @@ paths:
               examples:
                 로그인 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1,\"email\"\
-                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-05-29T15:29:43.2746795\"\
+                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-05-29T16:24:42.8950145\"\
                     }"
   /api/logout:
     post:
@@ -59,7 +59,7 @@ paths:
                 $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 로그아웃 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-29T15:29:43.5298442\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-29T16:24:43.1797391\"\
                     }"
   /api/project:
     post:
@@ -88,7 +88,7 @@ paths:
               examples:
                 프로젝트 생성 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-05-29T15:29:44.8213231\"}"
+                    :\"2026-05-29T16:24:44.7201964\"}"
   /api/projects:
     get:
       tags:
@@ -142,7 +142,7 @@ paths:
                     :10,\"completedTaskCount\":6,\"inProgressTaskCount\":4,\"progressRate\"\
                     :0.6}],\"pageInfo\":{\"currentPage\":1,\"pageSize\":10,\"totalElements\"\
                     :1,\"totalPages\":1,\"isFirst\":true,\"isLast\":true}},\"timestamp\"\
-                    :\"2026-05-29T15:29:44.7599115\"}"
+                    :\"2026-05-29T16:24:44.6562226\"}"
   /api/reissue:
     post:
       tags:
@@ -168,7 +168,7 @@ paths:
                 $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 토큰 재발급 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-29T15:29:42.2946126\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-29T16:24:41.7315593\"\
                     }"
         "401":
           description: "401"
@@ -179,7 +179,7 @@ paths:
               examples:
                 토큰 재발급 실패 - 리프레시 토큰이 만료 되었을 경우:
                   value: "{\"status\":\"ERROR\",\"body\":{\"status\":\"UNAUTHORIZED\"\
-                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-29T15:29:42.962046\"\
+                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-05-29T16:24:42.5648597\"\
                     }"
   /api/signup:
     post:
@@ -212,7 +212,7 @@ paths:
               examples:
                 user/signup:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
-                    :\"2026-05-29T15:30:24.3344881\"}"
+                    :\"2026-05-29T16:25:26.9542007\"}"
   /api/projects/{projectId}:
     get:
       tags:
@@ -241,7 +241,7 @@ paths:
                     :\"ACTIVE\",\"startDate\":\"2026-05-29\",\"endDate\":\"2026-08-29\"\
                     ,\"memberCount\":2,\"totalTaskCount\":10,\"completedTaskCount\"\
                     :6,\"inProgressTaskCount\":4,\"delayedTaskCount\":2},\"timestamp\"\
-                    :\"2026-05-29T15:29:44.6913336\"}"
+                    :\"2026-05-29T16:24:44.5852406\"}"
     put:
       tags:
       - Project
@@ -275,7 +275,31 @@ paths:
               examples:
                 프로젝트 수정 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-05-29T15:29:44.6388479\"}"
+                    :\"2026-05-29T16:24:44.5375098\"}"
+    delete:
+      tags:
+      - Project
+      summary: "프로젝트 삭제 API (OWNER 권한 필수, 논리 삭제로 처리)"
+      description: "프로젝트 삭제 API (OWNER 권한 필수, 논리 삭제로 처리)"
+      operationId: 프로젝트 삭제 성공
+      parameters:
+      - name: projectId
+        in: path
+        description: 삭제할 프로젝트의 고유 식별 ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/api-projects-projectId486549215"
+              examples:
+                프로젝트 삭제 성공:
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-05-29T16:24:44.3804961\"\
+                    }"
 components:
   schemas:
     ProjectListResponse:
@@ -369,6 +393,131 @@ components:
         status:
           type: string
           description: 응답 상태
+    CreateProjectRequest:
+      title: CreateProjectRequest
+      required:
+      - description
+      - endDate
+      - startDate
+      - status
+      - title
+      type: object
+      properties:
+        endDate:
+          type: string
+          description: 프로젝트 종료일
+        description:
+          type: string
+          description: 프로젝트 간략 설명
+        title:
+          type: string
+          description: 프로젝트 제목
+        startDate:
+          type: string
+          description: 프로젝트 시작일
+        status:
+          type: string
+          description: 프로젝트 상태
+    api-reissue2116916718:
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - message
+          - status
+          type: object
+          properties:
+            message:
+              type: string
+              description: 에러 메시지
+            status:
+              type: string
+              description: 에러 상태
+        timestamp:
+          type: string
+          description: 응답 시간
+        status:
+          type: string
+          description: 응답 상태
+    SignupRequest:
+      title: SignupRequest
+      required:
+      - email
+      - name
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: 사용자 비밀번호
+        name:
+          type: string
+          description: 사용자 이름
+        email:
+          type: string
+          description: 사용자 이메일
+    UpdateProjectResponse:
+      title: UpdateProjectResponse
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - projectId
+          type: object
+          properties:
+            projectId:
+              type: number
+              description: 수정 완료된 프로젝트 고유 ID
+        timestamp:
+          type: string
+          description: 응답 시간
+        status:
+          type: string
+          description: 응답 상태
+    UpdateProjectRequest:
+      title: UpdateProjectRequest
+      required:
+      - endDate
+      - startDate
+      - status
+      - title
+      type: object
+      properties:
+        endDate:
+          type: string
+          description: 변경할 프로젝트 종료일 (YYYY-MM-DD)
+        description:
+          type: string
+          description: 변경할 프로젝트 간략 설명 (500자 이내)
+          nullable: true
+        title:
+          type: string
+          description: 변경할 프로젝트 제목 (공백 불가)
+        startDate:
+          type: string
+          description: 변경할 프로젝트 시작일 (YYYY-MM-DD)
+        status:
+          type: string
+          description: "변경할 프로젝트 진행 상태 (ACTIVE, COMPLETED, ARCHIVED)"
+    api-reissue229656191:
+      required:
+      - body
+      - status
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: 응답 시간
+        status:
+          type: string
+          description: 응답 상태
     ProjectResponse:
       title: ProjectResponse
       required:
@@ -430,31 +579,6 @@ components:
         status:
           type: string
           description: 응답 상태
-    CreateProjectRequest:
-      title: CreateProjectRequest
-      required:
-      - description
-      - endDate
-      - startDate
-      - status
-      - title
-      type: object
-      properties:
-        endDate:
-          type: string
-          description: 프로젝트 종료일
-        description:
-          type: string
-          description: 프로젝트 간략 설명
-        title:
-          type: string
-          description: 프로젝트 제목
-        startDate:
-          type: string
-          description: 프로젝트 시작일
-        status:
-          type: string
-          description: 프로젝트 상태
     SignupResponse:
       title: SignupResponse
       required:
@@ -476,47 +600,6 @@ components:
         status:
           type: string
           description: 응답 상태
-    api-reissue2116916718:
-      required:
-      - status
-      - timestamp
-      type: object
-      properties:
-        body:
-          required:
-          - message
-          - status
-          type: object
-          properties:
-            message:
-              type: string
-              description: 에러 메시지
-            status:
-              type: string
-              description: 에러 상태
-        timestamp:
-          type: string
-          description: 응답 시간
-        status:
-          type: string
-          description: 응답 상태
-    SignupRequest:
-      title: SignupRequest
-      required:
-      - email
-      - name
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: 사용자 비밀번호
-        name:
-          type: string
-          description: 사용자 이름
-        email:
-          type: string
-          description: 사용자 이메일
     CreateProjectResponse:
       title: CreateProjectResponse
       required:
@@ -538,27 +621,6 @@ components:
         status:
           type: string
           description: 응답 상태
-    UpdateProjectResponse:
-      title: UpdateProjectResponse
-      required:
-      - status
-      - timestamp
-      type: object
-      properties:
-        body:
-          required:
-          - projectId
-          type: object
-          properties:
-            projectId:
-              type: number
-              description: 수정 완료된 프로젝트 고유 ID
-        timestamp:
-          type: string
-          description: 응답 시간
-        status:
-          type: string
-          description: 응답 상태
     LoginRequest:
       title: LoginRequest
       required:
@@ -572,31 +634,6 @@ components:
         email:
           type: string
           description: 사용자 이메일
-    UpdateProjectRequest:
-      title: UpdateProjectRequest
-      required:
-      - endDate
-      - startDate
-      - status
-      - title
-      type: object
-      properties:
-        endDate:
-          type: string
-          description: 변경할 프로젝트 종료일 (YYYY-MM-DD)
-        description:
-          type: string
-          description: 변경할 프로젝트 간략 설명 (500자 이내)
-          nullable: true
-        title:
-          type: string
-          description: 변경할 프로젝트 제목 (공백 불가)
-        startDate:
-          type: string
-          description: 변경할 프로젝트 시작일 (YYYY-MM-DD)
-        status:
-          type: string
-          description: "변경할 프로젝트 진행 상태 (ACTIVE, COMPLETED, ARCHIVED)"
     LoginResponse:
       title: LoginResponse
       required:
@@ -626,16 +663,5 @@ components:
         status:
           type: string
           description: 응답 상태
-    api-reissue229656191:
-      required:
-      - body
-      - status
-      - timestamp
+    api-projects-projectId486549215:
       type: object
-      properties:
-        timestamp:
-          type: string
-          description: 응답 시간
-        status:
-          type: string
-          description: 응답 상태

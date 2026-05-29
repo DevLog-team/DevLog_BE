@@ -115,4 +115,31 @@ class ProjectTest {
                     .hasMessage(ProjectErrorCode.INVALID_PROJECT_DATE.getMessage());
         }
     }
+
+    @Nested
+    @DisplayName("프로젝트 삭제 시")
+    class project_delete {
+
+        @Test
+        @DisplayName("성공: 삭제 메서드 호출 시 isDeleted가 true로 변경된다")
+        void success() {
+            // given
+            Project project = Project.builder()
+                    .title("삭제될 프로젝트")
+                    .description("설명")
+                    .status(ProjectStatus.ACTIVE)
+                    .startDate(LocalDate.now())
+                    .endDate(LocalDate.now().plusDays(7))
+                    .build();
+
+            // 처음에는 false 상태인지 검증
+            assertThat(project.isDeleted()).isFalse();
+
+            // when
+            project.delete();
+
+            // then
+            assertThat(project.isDeleted()).isTrue();
+        }
+    }
 }

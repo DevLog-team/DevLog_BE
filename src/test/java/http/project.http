@@ -33,3 +33,7 @@ Authorization: Bearer {{accessToken}}
   "startDate": "2026-05-27",
   "endDate": "2026-06-29"
 }
+
+### 프로젝트 삭제
+DELETE http://localhost:8080/api/projects/1
+Authorization: Bearer {{accessToken}}

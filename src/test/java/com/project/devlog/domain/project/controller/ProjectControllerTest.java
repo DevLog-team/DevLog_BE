@@ -367,4 +367,40 @@ class ProjectControllerTest {
                     );
         }
     }
+
+    @Nested
+    @DisplayName("프로젝트 삭제 테스트")
+    class Delete {
+
+        @Test
+        @DisplayName("성공: 프로젝트 OWNER 권한 검증 통과 후 성공적으로 프로젝트를 삭제(소프트 딜리트)한다")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long projectId = 1L;
+
+            given(projectSecurityEvaluator.isOwner(anyLong(), anyLong())).willReturn(true);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.delete("/api/projects/{projectId}", projectId)
+                            .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk()) // 💡 컨트롤러 반환 스펙인 200 OK 검증
+                    .andDo(document("프로젝트 삭제 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Project")
+                                                    .description("프로젝트 삭제 API (OWNER 권한 필수, 논리 삭제로 처리)")
+                                                    .pathParameters(
+                                                            parameterWithName("projectId").description("삭제할 프로젝트의 고유 식별 ID")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
 }
