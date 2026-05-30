@@ -1,6 +1,6 @@
 package com.project.devlog.domain.user.controller;
 
-import com.project.devlog.domain.user.controller.mapper.UserMapper;
+import com.project.devlog.domain.user.mapper.UserMapper;
 import com.project.devlog.domain.user.dto.request.SignupRequest;
 import com.project.devlog.domain.user.dto.response.UserIdResponse;
 import com.project.devlog.domain.user.service.UserService;
