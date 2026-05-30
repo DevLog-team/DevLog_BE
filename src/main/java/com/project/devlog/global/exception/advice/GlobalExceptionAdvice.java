@@ -6,6 +6,7 @@ import com.project.devlog.global.response.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,5 +37,13 @@ public class GlobalExceptionAdvice {
         log.error("[MethodArgumentNotValidException] {}", errorMessage);
         return ResponseEntity.status(errorStatus)
                 .body(new ErrorResponse(errorStatus, errorMessage));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> AccessDeniedException(final AccessDeniedException e) {
+        HttpStatus errorStatus = HttpStatus.FORBIDDEN;
+        log.error("[AccessDeniedException] {} - {}", e.getClass().getName(), e.getMessage());
+        return ResponseEntity.status(errorStatus)
+                .body(new ErrorResponse(errorStatus, "접근 권한이 없습니다."));
     }
 }

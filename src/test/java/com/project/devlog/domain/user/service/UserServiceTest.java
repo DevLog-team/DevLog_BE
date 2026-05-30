@@ -2,11 +2,13 @@ package com.project.devlog.domain.user.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 
 import com.project.devlog.domain.user.dto.request.SignupRequest;
 import com.project.devlog.domain.user.entity.User;
+import com.project.devlog.domain.user.mapper.UserMapper;
 import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.global.exception.BusinessException;
@@ -33,10 +35,15 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private UserMapper userMapper;
+
     UserMock mock;
 
     @BeforeEach
-    void setUp() { mock = new UserMock(passwordEncoder); }
+    void setUp() {
+        mock = new UserMock(passwordEncoder);
+    }
 
     @Test
     @DisplayName("회원 가입 테스트: 성공")
@@ -45,6 +52,7 @@ class UserServiceTest {
         User savedUser = mock.domainMock();
         SignupRequest requestDto = mock.signupMock();
 
+        given(userMapper.toUser(any(SignupRequest.class), any())).willReturn(savedUser);
         given(userRepository.save(any(User.class))).willReturn(savedUser);
 
         // when
@@ -61,7 +69,7 @@ class UserServiceTest {
         SignupRequest requestDto = mock.signupMock();
 
         doThrow(new BusinessException(UserErrorCode.EMAIL_ALREADY_EXISTS))
-                .when(userRepository).save(any(User.class));
+                .when(userRepository).findByEmailAndIsDeletedFalse(anyString());
 
         // when & then
         assertThatThrownBy(() -> sut.signup(requestDto))

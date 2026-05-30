@@ -4,11 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.project.devlog.domain.auth.service.AuthService;
-import com.project.devlog.domain.user.controller.mapper.UserMapper;
+import com.project.devlog.domain.project.mapper.ProjectMapper;
+import com.project.devlog.domain.project.mock.ProjectMock;
+import com.project.devlog.domain.project.service.ProjectService;
+import com.project.devlog.domain.user.mapper.UserMapper;
 import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.domain.user.service.UserService;
 import com.project.devlog.global.cache.RedisRepository;
+import com.project.devlog.global.security.evaluator.ProjectSecurityEvaluator;
 import com.project.devlog.global.security.handler.AccessDeniedCustomHandler;
 import com.project.devlog.global.security.handler.AuthenticationEntryPointCustom;
 import com.project.devlog.global.security.handler.AuthenticationFailureCustomHandler;
@@ -80,6 +84,11 @@ public class AuthTestConfig {
         return new LogoutSuccessCustomHandler(authService(), responseUtil(), cookieUtils(), jwtProvider());
     }
 
+    @Bean(name = "projectSecurity")
+    public ProjectSecurityEvaluator projectSecurityEvaluator() {
+        return Mockito.mock(ProjectSecurityEvaluator.class);
+    }
+
     @Bean
     public AuthService authService() {
         return new AuthService(
@@ -118,5 +127,18 @@ public class AuthTestConfig {
     @Bean
     public UserMock userMock() {
         return new UserMock(passwordEncoder());
+    }
+
+    @Bean
+    public ProjectService projectService() { return Mockito.mock(ProjectService.class); }
+
+    @Bean
+    public ProjectMapper projectMapper() {
+        return new ProjectMapper();
+    }
+
+    @Bean
+    public ProjectMock projectMock() {
+        return new ProjectMock();
     }
 }

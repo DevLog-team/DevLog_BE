@@ -1,5 +1,6 @@
 package com.project.devlog.domain.user.entity;
 
+import com.project.devlog.domain.project.entity.ProjectUser;
 import com.project.devlog.domain.user.entity.enums.UserRole;
 import com.project.devlog.global.audting.BaseDateTime;
 import jakarta.persistence.Column;
@@ -9,7 +10,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +40,9 @@ public class User extends BaseDateTime {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany(mappedBy = "user")
+    private List<ProjectUser> projectUsers = new ArrayList<>();
 
     private boolean isDeleted;
 
