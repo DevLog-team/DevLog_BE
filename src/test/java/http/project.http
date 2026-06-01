@@ -37,3 +37,15 @@ Authorization: Bearer {{accessToken}}
 ### 프로젝트 삭제
 DELETE http://localhost:8080/api/projects/1
 Authorization: Bearer {{accessToken}}
+
+### 프로젝트 팀원 추가
+POST http://localhost:8080/api/projects/1/invite
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "emails": [
+    "test2@naver.com",
+    "test3@naver.com"
+  ]
+}

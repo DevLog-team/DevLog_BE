@@ -41,7 +41,7 @@ paths:
               examples:
                 로그인 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1,\"email\"\
-                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-06-01T17:21:55.6914042\"\
+                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-06-01T20:21:18.8510094\"\
                     }"
   /api/logout:
     post:
@@ -56,10 +56,10 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: "#/components/schemas/api-logout229656191"
+                $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 로그아웃 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-01T17:21:55.9519571\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-01T20:21:19.111023\"\
                     }"
   /api/project:
     post:
@@ -88,7 +88,7 @@ paths:
               examples:
                 프로젝트 생성 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-06-01T17:21:57.2683019\"}"
+                    :\"2026-06-01T20:21:20.3593959\"}"
   /api/projects:
     get:
       tags:
@@ -142,7 +142,7 @@ paths:
                     OWNER\",\"totalTaskCount\":10,\"completedTaskCount\":6,\"inProgressTaskCount\"\
                     :4,\"progressRate\":0.6}],\"pageInfo\":{\"currentPage\":1,\"pageSize\"\
                     :10,\"totalElements\":1,\"totalPages\":1,\"isFirst\":true,\"isLast\"\
-                    :true}},\"timestamp\":\"2026-06-01T17:21:57.2041998\"}"
+                    :true}},\"timestamp\":\"2026-06-01T20:21:20.3098921\"}"
   /api/reissue:
     post:
       tags:
@@ -165,10 +165,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-logout229656191"
+                $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 토큰 재발급 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-01T17:21:54.7112101\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-01T20:21:17.8382379\"\
                     }"
         "401":
           description: "401"
@@ -179,7 +179,7 @@ paths:
               examples:
                 토큰 재발급 실패 - 리프레시 토큰이 만료 되었을 경우:
                   value: "{\"status\":\"ERROR\",\"body\":{\"status\":\"UNAUTHORIZED\"\
-                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-06-01T17:21:55.3897146\"\
+                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-06-01T20:21:18.5377827\"\
                     }"
   /api/signup:
     post:
@@ -212,7 +212,7 @@ paths:
               examples:
                 user/signup:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
-                    :\"2026-06-01T17:22:38.2483007\"}"
+                    :\"2026-06-01T20:21:51.5118056\"}"
   /api/projects/{projectId}:
     get:
       tags:
@@ -241,7 +241,7 @@ paths:
                     :\"ACTIVE\",\"startDate\":\"2026-06-01\",\"endDate\":\"2026-09-01\"\
                     ,\"role\":\"OWNER\",\"memberCount\":2,\"totalTaskCount\":10,\"\
                     completedTaskCount\":6,\"inProgressTaskCount\":4,\"delayedTaskCount\"\
-                    :2},\"timestamp\":\"2026-06-01T17:21:57.1456259\"}"
+                    :2},\"timestamp\":\"2026-06-01T20:21:20.257519\"}"
     put:
       tags:
       - Project
@@ -275,7 +275,7 @@ paths:
               examples:
                 프로젝트 수정 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-06-01T17:21:57.0955454\"}"
+                    :\"2026-06-01T20:21:20.2165096\"}"
     delete:
       tags:
       - Project
@@ -298,8 +298,44 @@ paths:
                 $ref: "#/components/schemas/api-projects-projectId486549215"
               examples:
                 프로젝트 삭제 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-01T17:21:56.9498809\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-01T20:21:20.1710486\"\
                     }"
+  /api/projects/{projectId}/invite:
+    post:
+      tags:
+      - Project
+      summary: 프로젝트 팀원 일괄 초대 API (OWNER 권한 필수)
+      description: 프로젝트 팀원 일괄 초대 API (OWNER 권한 필수)
+      operationId: 프로젝트 팀원 초대 성공
+      parameters:
+      - name: projectId
+        in: path
+        description: 팀원을 초대할 대상 프로젝트의 고유 ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: "#/components/schemas/InviteMembersRequest"
+            examples:
+              프로젝트 팀원 초대 성공:
+                value: "{\"emails\":[\"success@test.com\",\"notfound@test.com\",\"\
+                  already@test.com\"]}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InviteMembersResponse"
+              examples:
+                프로젝트 팀원 초대 성공:
+                  value: "{\"status\":\"SUCCESS\",\"body\":{\"successEmails\":[\"\
+                    success@test.com\"],\"failedEmails\":[\"notfound@test.com (존재하\
+                    지 않는 회원)\",\"already@test.com (이미 참여 중인 팀원)\"]},\"timestamp\"\
+                    :\"2026-06-01T20:21:20.1307593\"}"
 components:
   schemas:
     CreateProjectRequest:
@@ -351,6 +387,21 @@ components:
         status:
           type: string
           description: 응답 상태
+    InviteMembersRequest:
+      title: InviteMembersRequest
+      required:
+      - emails
+      type: object
+      properties:
+        emails:
+          type: array
+          description: 초대 대상 사용자들의 이메일 리스트 (최대 10개)
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
     SignupRequest:
       title: SignupRequest
       required:
@@ -414,7 +465,7 @@ components:
         status:
           type: string
           description: "변경할 프로젝트 진행 상태 (ACTIVE, COMPLETED, ARCHIVED)"
-    api-logout229656191:
+    api-reissue229656191:
       required:
       - body
       - status
@@ -665,6 +716,43 @@ components:
             email:
               type: string
               description: 사용자 이메일
+        timestamp:
+          type: string
+          description: 응답 시간
+        status:
+          type: string
+          description: 응답 상태
+    InviteMembersResponse:
+      title: InviteMembersResponse
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - failedEmails
+          - successEmails
+          type: object
+          properties:
+            failedEmails:
+              type: array
+              description: 초대 실패한 이메일 및 실패 사유 목록
+              items:
+                oneOf:
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
+            successEmails:
+              type: array
+              description: 초대 성공 처리된 사용자 이메일 목록
+              items:
+                oneOf:
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
         timestamp:
           type: string
           description: 응답 시간

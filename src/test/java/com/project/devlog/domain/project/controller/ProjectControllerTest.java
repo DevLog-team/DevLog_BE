@@ -3,6 +3,7 @@ package com.project.devlog.domain.project.controller;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -15,8 +16,10 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
+import com.project.devlog.domain.project.dto.request.InviteMembersRequest;
 import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
 import com.project.devlog.domain.project.dto.request.UpdateProjectRequest;
+import com.project.devlog.domain.project.dto.response.InviteMembersResponse;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
@@ -27,6 +30,7 @@ import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
 import com.project.devlog.global.security.evaluator.ProjectSecurityEvaluator;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -400,6 +404,83 @@ class ProjectControllerTest {
                                                     .description("프로젝트 삭제 API (OWNER 권한 필수, 논리 삭제로 처리)")
                                                     .pathParameters(
                                                             parameterWithName("projectId").description("삭제할 프로젝트의 고유 식별 ID")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 팀원 초대 테스트")
+    class InviteMembers {
+
+        @Test
+        @DisplayName("성공: 프로젝트 OWNER 권한 검증 통과 후 성공적으로 팀원들을 초대하고 분류 결과를 반환한다")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long projectId = 1L;
+            String successEmail = "success@test.com";
+            String notFoundEmail = "notfound@test.com (존재하지 않는 회원)";
+            String alreadyMemberEmail = "already@test.com (이미 참여 중인 팀원)";
+
+            InviteMembersRequest requestDto = new InviteMembersRequest(
+                    List.of("success@test.com", "notfound@test.com", "already@test.com")
+            );
+
+            InviteMembersResponse mockResponse = new InviteMembersResponse(
+                    List.of(successEmail),
+                    List.of(notFoundEmail, alreadyMemberEmail)
+            );
+
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            given(projectSecurityEvaluator.isOwner(anyLong(), anyLong())).willReturn(true);
+
+            given(projectService.inviteMembers(anyLong(), any(InviteMembersRequest.class)))
+                    .willReturn(mockResponse);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post("/api/projects/{projectId}/invite", projectId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.successEmails").isArray())
+                    .andExpect(jsonPath("$.body.failedEmails").isArray())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("프로젝트 팀원 초대 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Project")
+                                                    .description("프로젝트 팀원 일괄 초대 API (OWNER 권한 필수)")
+                                                    .pathParameters(
+                                                            parameterWithName("projectId").description("팀원을 초대할 대상 프로젝트의 고유 ID")
+                                                    )
+                                                    .requestSchema(Schema.schema("InviteMembersRequest"))
+                                                    .requestFields(
+                                                            fieldWithPath("emails[]").type(JsonFieldType.ARRAY)
+                                                                    .description("초대 대상 사용자들의 이메일 리스트 (최대 10개)")
+                                                    )
+                                                    .responseSchema(Schema.schema("InviteMembersResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
+
+                                                            fieldWithPath("body.successEmails[]").type(JsonFieldType.ARRAY)
+                                                                    .description("초대 성공 처리된 사용자 이메일 목록"),
+                                                            fieldWithPath("body.failedEmails[]").type(JsonFieldType.ARRAY)
+                                                                    .description("초대 실패한 이메일 및 실패 사유 목록"),
+
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간")
                                                     )
                                                     .build()
                                     )
