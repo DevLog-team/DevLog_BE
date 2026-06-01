@@ -19,4 +19,6 @@ public interface ProjectUserRepository extends JpaRepository<ProjectUser, Long> 
     Optional<ProjectUserRole> findRoleByProjectIdAndUserId(@Param("projectId") Long projectId, @Param("userId") Long userId);
 
     List<ProjectUser> findByProjectIdAndIsDeletedFalse(Long projectId);
+
+    boolean existsByProjectIdAndUserIdAndIsDeletedFalse(Long projectId, Long id);
 }
