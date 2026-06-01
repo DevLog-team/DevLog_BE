@@ -194,6 +194,8 @@ class ProjectControllerTest {
                                                                     .description("프로젝트 상태 (ACTIVE, COMPLETED, ARCHIVED)"),
                                                             fieldWithPath("body.content[].endDate").type(JsonFieldType.STRING)
                                                                     .description("프로젝트 마감일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.content[].role").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 권한 (OWNER, MEMBER)"),
                                                             fieldWithPath("body.content[].totalTaskCount").type(
                                                                     JsonFieldType.NUMBER).description("총 태스크 개수"),
                                                             fieldWithPath("body.content[].completedTaskCount").type(
@@ -278,6 +280,8 @@ class ProjectControllerTest {
                                                                     .description("프로젝트 개시일 (YYYY-MM-DD)"),
                                                             fieldWithPath("body.endDate").type(JsonFieldType.STRING)
                                                                     .description("프로젝트 마감일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.role").type(JsonFieldType.STRING)
+                                                                    .description("프로젝트 권한 (OWNER, MEMBER)"),
                                                             fieldWithPath("body.memberCount").type(JsonFieldType.NUMBER)
                                                                     .description("프로젝트에 참가하고 있는 팀원 수"),
                                                             fieldWithPath("body.totalTaskCount").type(JsonFieldType.NUMBER)

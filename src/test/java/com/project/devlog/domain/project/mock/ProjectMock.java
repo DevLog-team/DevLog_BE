@@ -24,6 +24,8 @@ public class ProjectMock {
     private final String title = "스프링부트 프로젝트";
     private final String description = "개발 프로젝트 설명입니다.";
     private final ProjectStatus status = ProjectStatus.ACTIVE;
+    private final ProjectUserRole ownerRole = ProjectUserRole.OWNER;
+    private final ProjectUserRole memberRole = ProjectUserRole.MEMBER;
     private final LocalDate startDate = LocalDate.now();
     private final LocalDate endDate = LocalDate.now().plusMonths(3);
 
@@ -61,6 +63,7 @@ public class ProjectMock {
                 description,
                 status,
                 endDate,
+                ownerRole,
                 totalTaskCount,
                 completedTaskCount,
                 inProgressTaskCount
@@ -79,6 +82,7 @@ public class ProjectMock {
                 description,
                 status,
                 endDate,
+                ownerRole,
                 totalTaskCount,
                 completedTaskCount,
                 inProgressTaskCount,
@@ -97,6 +101,7 @@ public class ProjectMock {
                 status,
                 startDate,
                 endDate,
+                ownerRole,
                 2L,
                 totalTaskCount,
                 completedTaskCount,

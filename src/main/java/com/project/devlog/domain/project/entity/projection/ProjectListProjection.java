@@ -1,6 +1,7 @@
 package com.project.devlog.domain.project.entity.projection;
 
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
+import com.project.devlog.domain.project.entity.enums.ProjectUserRole;
 import com.querydsl.core.annotations.QueryProjection;
 import java.time.LocalDate;
 
@@ -9,6 +10,7 @@ public record ProjectListProjection(Long projectId,
                                     String description,
                                     ProjectStatus status,
                                     LocalDate endDate,
+                                    ProjectUserRole role,
 
                                     Long totalTaskCount,
                                     Long completedTaskCount,
@@ -18,7 +20,7 @@ public record ProjectListProjection(Long projectId,
 
     @QueryProjection
     public ProjectListProjection(Long projectId, String title, String description,
-                               ProjectStatus status, LocalDate endDate,
+                               ProjectStatus status, LocalDate endDate, ProjectUserRole role,
                                long totalTaskCount, long completedTaskCount, long inProgressTaskCount) {
         this(
                 projectId,
@@ -26,6 +28,7 @@ public record ProjectListProjection(Long projectId,
                 description,
                 status,
                 endDate,
+                role,
                 totalTaskCount,
                 completedTaskCount,
                 inProgressTaskCount,
