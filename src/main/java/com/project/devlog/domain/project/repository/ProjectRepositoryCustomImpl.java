@@ -41,6 +41,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                                 project.description,
                                 project.status,
                                 project.endDate,
+                                projectUser.role,
                                 // TODO 작업 기능 추가 이후 개발 예정 (임시 데이터)
                                 Expressions.constant(0L),
                                 Expressions.constant(0L),
@@ -100,6 +101,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
                         project.status,
                         project.startDate,
                         project.endDate,
+                        projectUser.role,
 
                         JPAExpressions
                                 .select(projectUser.count())

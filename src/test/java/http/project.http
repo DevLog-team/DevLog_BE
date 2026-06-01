@@ -14,7 +14,7 @@ Authorization: Bearer {{accessToken}}
 
 
 ### 프로젝트 목록 조회 (페이지네이션: page, size, sort)
-GET http://localhost:8080/api/projects?title=테스트&status=ACTIVE&page=1&size=3&sort=createdAt,desc
+GET http://localhost:8080/api/projects?title=테스트&status=ACTIVE&page=0&size=3&sort=createdAt,desc
 Authorization: Bearer {{accessToken}}
 
 ### 프로젝트 단건 조회
@@ -37,3 +37,15 @@ Authorization: Bearer {{accessToken}}
 ### 프로젝트 삭제
 DELETE http://localhost:8080/api/projects/1
 Authorization: Bearer {{accessToken}}
+
+### 프로젝트 팀원 추가
+POST http://localhost:8080/api/projects/1/invite
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "emails": [
+    "test2@naver.com",
+    "test3@naver.com"
+  ]
+}
