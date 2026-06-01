@@ -1,8 +1,10 @@
 package com.project.devlog.domain.project.controller;
 
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
+import com.project.devlog.domain.project.dto.request.InviteMembersRequest;
 import com.project.devlog.domain.project.dto.request.ProjectSearchCondition;
 import com.project.devlog.domain.project.dto.request.UpdateProjectRequest;
+import com.project.devlog.domain.project.dto.response.InviteMembersResponse;
 import com.project.devlog.domain.project.dto.response.ProjectDetailResponse;
 import com.project.devlog.domain.project.dto.response.ProjectIdResponse;
 import com.project.devlog.domain.project.dto.response.ProjectListResponse;
@@ -91,5 +93,16 @@ public class ProjectController {
     ) {
         projectService.delete(projectId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/projects/{projectId}/invite")
+    @PreAuthorize("@projectSecurity.isOwner(#projectId, #userId)")
+    public ResponseEntity<InviteMembersResponse> inviteMembers(
+            @CurrentUser Long userId,
+            @PathVariable Long projectId,
+            @Valid @RequestBody InviteMembersRequest request
+    ) {
+        InviteMembersResponse response = projectService.inviteMembers(projectId, request);
+        return ResponseEntity.ok().body(response);
     }
 }

@@ -1,6 +1,7 @@
 package com.project.devlog.domain.project.mapper;
 
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
+import com.project.devlog.domain.project.dto.response.InviteMembersResponse;
 import com.project.devlog.domain.project.dto.response.ProjectDetailResponse;
 import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.global.response.dto.PageInfo;
@@ -83,5 +84,9 @@ public class ProjectMapper {
                 project.inProgressTaskCount(),
                 project.delayedTaskCount()
         );
+    }
+
+    public InviteMembersResponse toInviteMembersResponse(List<String> successEmails, List<String> failedEmails) {
+        return new InviteMembersResponse(successEmails, failedEmails);
     }
 }
