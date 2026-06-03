@@ -41,4 +41,8 @@ public class Tag extends BaseDateTime {
         this.name = name;
         this.color = color;
     }
+
+    public void delete() {
+        isDeleted = true;
+    }
 }

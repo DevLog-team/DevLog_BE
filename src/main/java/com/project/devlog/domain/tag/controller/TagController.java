@@ -15,6 +15,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,5 +61,11 @@ public class TagController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.LOCATION, location.toString())
                 .body(tagMapper.toIdDTO(tagId));
+    }
+
+    @DeleteMapping("/api/tags/{tagId}")
+    public ResponseEntity<Void> delete( @PathVariable Long tagId ) {
+        tagService.delete(tagId);
+        return ResponseEntity.ok().build();
     }
 }

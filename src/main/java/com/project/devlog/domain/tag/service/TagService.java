@@ -56,4 +56,10 @@ public class TagService {
         tag.update(request.name(), request.color());
         return tag.getId();
     }
+
+    @Transactional
+    public void delete(Long tagId) {
+        Tag tag = findById(tagId);
+        tag.delete();
+    }
 }
