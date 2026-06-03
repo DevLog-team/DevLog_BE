@@ -7,3 +7,7 @@ Authorization: Bearer {{accessToken}}
   "name": "태그 이름",
   "color": "태그 색"
 }
+
+### 태그 단건 조회
+GET http://localhost:8080/api/tags/1
+Authorization: Bearer {{accessToken}}

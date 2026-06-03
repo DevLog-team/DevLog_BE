@@ -5,6 +5,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -93,7 +94,59 @@ class TagControllerTest {
                                                             fieldWithPath("status").type(JsonFieldType.STRING)
                                                                     .description("응답 상태"),
                                                             fieldWithPath("body.tagId").type(JsonFieldType.NUMBER)
-                                                                    .description("프로젝트 ID"),
+                                                                    .description("태그 ID"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간"))
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("태그 단건 조회")
+    class getOne {
+        @Test
+        @DisplayName("성공: 태그 조회 후 반환")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Tag tag = tagMock.domainMock();
+
+            given(tagService.getOne(any())).willReturn(tag);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get("/api/tags/{tagId}", tag.getId())
+                            .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.tagId").isNumber())
+                    .andExpect(jsonPath("$.body.name").isString())
+                    .andExpect(jsonPath("$.body.color").isString())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("태그 단건 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Tag")
+                                                    .description("태그 단건 조회 API")
+                                                    .pathParameters(
+                                                            parameterWithName("tagId").description("조회할 태그의 고유 식별 ID")
+                                                    )
+                                                    .responseSchema(Schema.schema("TagResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
+                                                            fieldWithPath("body.tagId").type(JsonFieldType.NUMBER)
+                                                                    .description("태그 ID"),
+                                                            fieldWithPath("body.name").type(JsonFieldType.STRING)
+                                                                    .description("태그 이름"),
+                                                            fieldWithPath("body.color").type(JsonFieldType.STRING)
+                                                                    .description("태그 색"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 시간"))
                                                     .build()
