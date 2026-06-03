@@ -13,12 +13,14 @@ import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
+import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mock.TaskMock;
 import com.project.devlog.domain.task.service.TaskService;
 import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -111,6 +113,47 @@ class TaskControllerTest {
                                                                     .description("응답 상태 코드/메시지"),
                                                             fieldWithPath("body.taskId").type(JsonFieldType.NUMBER)
                                                                     .description("생성된 작업 고유 ID"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시"))
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 상태 목록 조회")
+    class Status {
+
+        @Test
+        @DisplayName("성공: 작업 상태 목록 조회")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            given(taskService.getStatusList()).willReturn(List.of(TaskStatus.values()));
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/status")
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.taskStatusList").isArray())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 상태 목록 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("작업 상태 목록 조회  API")
+                                                    .responseSchema(Schema.schema("TaskStatusListResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+                                                            fieldWithPath("body.taskStatusList").type(JsonFieldType.ARRAY)
+                                                                    .description("작업 상태 목록"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 발행 일시"))
                                                     .build()
