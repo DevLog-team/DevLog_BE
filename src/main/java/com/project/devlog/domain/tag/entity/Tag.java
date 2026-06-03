@@ -36,4 +36,9 @@ public class Tag extends BaseDateTime {
         this.name = name;
         this.color = color;
     }
+
+    public void update(String name, String color) {
+        this.name = name;
+        this.color = color;
+    }
 }

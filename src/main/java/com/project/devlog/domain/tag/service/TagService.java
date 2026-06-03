@@ -1,11 +1,13 @@
 package com.project.devlog.domain.tag.service;
 
 import com.project.devlog.domain.tag.dto.request.CreateTagRequest;
+import com.project.devlog.domain.tag.dto.request.UpdateTagRequest;
 import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.tag.mapper.TagMapper;
 import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.TagErrorCode;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,5 +46,14 @@ public class TagService {
 
     public List<Tag> getList() {
         return tagRepository.findAllByisDeletedFalse();
+    }
+
+    @Transactional
+    public Long update(Long tagId, UpdateTagRequest request) {
+        validateDuplicateName(request.name());
+
+        Tag tag = findById(tagId);
+        tag.update(request.name(), request.color());
+        return tag.getId();
     }
 }
