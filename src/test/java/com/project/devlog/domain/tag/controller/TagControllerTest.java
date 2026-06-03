@@ -19,12 +19,12 @@ import com.project.devlog.domain.tag.service.TagService;
 import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -146,6 +146,53 @@ class TagControllerTest {
                                                             fieldWithPath("body.name").type(JsonFieldType.STRING)
                                                                     .description("태그 이름"),
                                                             fieldWithPath("body.color").type(JsonFieldType.STRING)
+                                                                    .description("태그 색"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간"))
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("태그 목록 조회")
+    class getList {
+        @Test
+        @DisplayName("성공: 태그 목록 조회")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Tag tag = tagMock.domainMock();
+
+            given(tagService.getList()).willReturn(List.of(tag));
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get("/api/tags")
+                            .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.tags").isArray())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("태그 목록 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Tag")
+                                                    .description("태그 목록 조회 API")
+                                                    .responseSchema(Schema.schema("TagListResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
+                                                            fieldWithPath("body.tags[].tagId").type(JsonFieldType.NUMBER)
+                                                                    .description("태그 ID"),
+                                                            fieldWithPath("body.tags[].name").type(JsonFieldType.STRING)
+                                                                    .description("태그 이름"),
+                                                            fieldWithPath("body.tags[].color").type(JsonFieldType.STRING)
                                                                     .description("태그 색"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 시간"))
