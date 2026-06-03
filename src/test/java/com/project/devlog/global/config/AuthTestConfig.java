@@ -7,6 +7,9 @@ import com.project.devlog.domain.auth.service.AuthService;
 import com.project.devlog.domain.project.mapper.ProjectMapper;
 import com.project.devlog.domain.project.mock.ProjectMock;
 import com.project.devlog.domain.project.service.ProjectService;
+import com.project.devlog.domain.tag.mapper.TagMapper;
+import com.project.devlog.domain.tag.mock.TagMock;
+import com.project.devlog.domain.tag.service.TagService;
 import com.project.devlog.domain.user.mapper.UserMapper;
 import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.domain.user.repository.UserRepository;
@@ -140,5 +143,18 @@ public class AuthTestConfig {
     @Bean
     public ProjectMock projectMock() {
         return new ProjectMock();
+    }
+
+    @Bean
+    public TagService tagService() { return Mockito.mock(TagService.class); }
+
+    @Bean
+    public TagMapper tagMapper() {
+        return new TagMapper();
+    }
+
+    @Bean
+    public TagMock tagMock() {
+        return new TagMock();
     }
 }
