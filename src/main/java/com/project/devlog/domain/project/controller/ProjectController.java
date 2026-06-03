@@ -8,14 +8,17 @@ import com.project.devlog.domain.project.dto.response.InviteMembersResponse;
 import com.project.devlog.domain.project.dto.response.ProjectDetailResponse;
 import com.project.devlog.domain.project.dto.response.ProjectIdResponse;
 import com.project.devlog.domain.project.dto.response.ProjectListResponse;
+import com.project.devlog.domain.project.dto.response.ProjectMembersResponse;
 import com.project.devlog.domain.project.entity.projection.ProjectListProjection;
 import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.mapper.ProjectMapper;
 import com.project.devlog.domain.project.service.ProjectService;
+import com.project.devlog.domain.user.entity.User;
 import com.project.devlog.global.annotation.CurrentUser;
 import com.project.devlog.global.util.UrlCreator;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -104,5 +107,11 @@ public class ProjectController {
     ) {
         InviteMembersResponse response = projectService.inviteMembers(projectId, request);
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/api/projects/{projectId}/members")
+    public ResponseEntity<ProjectMembersResponse> getMembers(@PathVariable Long projectId) {
+        List<User> members = projectService.getMembers(projectId);
+        return ResponseEntity.ok().body(projectMapper.toProjectMembersResponse(members));
     }
 }
