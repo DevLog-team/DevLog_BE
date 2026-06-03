@@ -25,3 +25,7 @@ Authorization: Bearer {{accessToken}}
   "name": "수정된 태그 이름",
   "color": "수정된 태그 색"
 }
+
+### 태그 삭제
+DELETE http://localhost:8080/api/tags/1
+Authorization: Bearer {{accessToken}}

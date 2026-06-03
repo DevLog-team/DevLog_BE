@@ -1,6 +1,6 @@
 package com.project.devlog.domain.tag.entity;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,23 @@ class TagTest {
         tag.update("프론트엔드", "red");
 
         // then
-        assert(tag.getName()).equals("프론트엔드");
-        assert(tag.getColor()).equals("red");
+        assertThat(tag.getName()).isEqualTo("프론트엔드");
+        assertThat(tag.getColor()).isEqualTo("red");
+    }
+
+    @Test
+    @DisplayName("태그 삭세 성공")
+    void delete_success() throws Exception {
+        // given
+        Tag tag = Tag.builder()
+                .name("백엔드")
+                .color("blue")
+                .build();
+
+        // when
+        tag.delete();
+
+        // then
+        assertThat(tag.isDeleted()).isTrue();
     }
 }

@@ -257,4 +257,38 @@ class TagControllerTest {
                     );
         }
     }
+
+    @Nested
+    @DisplayName("태그 삭제")
+    class delete {
+        @Test
+        @DisplayName("성공: 태그 삭제")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Tag tag = tagMock.domainMock();
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.delete("/api/tags/{tagId}", tag.getId()));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("태그 삭제 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Tag")
+                                                    .description("태그 삭제 API")
+                                                    .pathParameters(
+                                                            parameterWithName("tagId").description("삭제할 태그의 고유 식별 ID")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
 }

@@ -41,7 +41,7 @@ paths:
               examples:
                 로그인 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1,\"email\"\
-                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-06-03T16:10:51.786451\"\
+                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-06-03T16:20:28.4960555\"\
                     }"
   /api/logout:
     post:
@@ -56,10 +56,10 @@ paths:
           content:
             application/json;charset=UTF-8:
               schema:
-                $ref: "#/components/schemas/api-logout229656191"
+                $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 로그아웃 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-03T16:10:52.047162\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-03T16:20:28.7515235\"\
                     }"
   /api/project:
     post:
@@ -88,7 +88,7 @@ paths:
               examples:
                 프로젝트 생성 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-06-03T16:10:53.4085948\"}"
+                    :\"2026-06-03T16:20:30.0334194\"}"
   /api/projects:
     get:
       tags:
@@ -142,7 +142,7 @@ paths:
                     OWNER\",\"totalTaskCount\":10,\"completedTaskCount\":6,\"inProgressTaskCount\"\
                     :4,\"progressRate\":0.6}],\"pageInfo\":{\"currentPage\":1,\"pageSize\"\
                     :10,\"totalElements\":1,\"totalPages\":1,\"isFirst\":true,\"isLast\"\
-                    :true}},\"timestamp\":\"2026-06-03T16:10:53.351992\"}"
+                    :true}},\"timestamp\":\"2026-06-03T16:20:29.9831393\"}"
   /api/reissue:
     post:
       tags:
@@ -165,10 +165,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-logout229656191"
+                $ref: "#/components/schemas/api-reissue229656191"
               examples:
                 토큰 재발급 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-03T16:10:50.7234486\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-03T16:20:27.4730365\"\
                     }"
         "401":
           description: "401"
@@ -179,7 +179,7 @@ paths:
               examples:
                 토큰 재발급 실패 - 리프레시 토큰이 만료 되었을 경우:
                   value: "{\"status\":\"ERROR\",\"body\":{\"status\":\"UNAUTHORIZED\"\
-                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-06-03T16:10:51.4686202\"\
+                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-06-03T16:20:28.1949354\"\
                     }"
   /api/signup:
     post:
@@ -212,7 +212,7 @@ paths:
               examples:
                 user/signup:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
-                    :\"2026-06-03T16:11:34.7363558\"}"
+                    :\"2026-06-03T16:21:03.1314744\"}"
   /api/tag:
     post:
       tags:
@@ -238,7 +238,7 @@ paths:
               examples:
                 태그 생성 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tagId\":1},\"timestamp\"\
-                    :\"2026-06-03T16:11:34.1342415\"}"
+                    :\"2026-06-03T16:21:02.5491467\"}"
   /api/tags:
     get:
       tags:
@@ -256,7 +256,7 @@ paths:
               examples:
                 태그 목록 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tags\":[{\"tagId\":1,\"\
-                    name\":\"백엔드\",\"color\":\"blue\"}]},\"timestamp\":\"2026-06-03T16:11:34.0756438\"\
+                    name\":\"백엔드\",\"color\":\"blue\"}]},\"timestamp\":\"2026-06-03T16:21:02.4816659\"\
                     }"
   /api/projects/{projectId}:
     get:
@@ -286,7 +286,7 @@ paths:
                     :\"ACTIVE\",\"startDate\":\"2026-06-03\",\"endDate\":\"2026-09-03\"\
                     ,\"role\":\"OWNER\",\"memberCount\":2,\"totalTaskCount\":10,\"\
                     completedTaskCount\":6,\"inProgressTaskCount\":4,\"delayedTaskCount\"\
-                    :2},\"timestamp\":\"2026-06-03T16:10:53.2979819\"}"
+                    :2},\"timestamp\":\"2026-06-03T16:20:29.9310437\"}"
     put:
       tags:
       - Project
@@ -320,7 +320,7 @@ paths:
               examples:
                 프로젝트 수정 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-06-03T16:10:53.2504699\"}"
+                    :\"2026-06-03T16:20:29.8895818\"}"
     delete:
       tags:
       - Project
@@ -343,7 +343,7 @@ paths:
                 $ref: "#/components/schemas/api-projects-projectId486549215"
               examples:
                 프로젝트 삭제 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-03T16:10:53.2038963\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-03T16:20:29.8430927\"\
                     }"
   /api/tags/{tagId}:
     get:
@@ -369,7 +369,7 @@ paths:
               examples:
                 태그 단건 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tagId\":1,\"name\":\"\
-                    백엔드\",\"color\":\"blue\"},\"timestamp\":\"2026-06-03T16:11:34.1061141\"\
+                    백엔드\",\"color\":\"blue\"},\"timestamp\":\"2026-06-03T16:21:02.5169289\"\
                     }"
     put:
       tags:
@@ -402,7 +402,31 @@ paths:
               examples:
                 태그 수정 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tagId\":1},\"timestamp\"\
-                    :\"2026-06-03T16:11:34.0409073\"}"
+                    :\"2026-06-03T16:21:02.4455514\"}"
+    delete:
+      tags:
+      - Tag
+      summary: 태그 삭제 API
+      description: 태그 삭제 API
+      operationId: 태그 삭제 성공
+      parameters:
+      - name: tagId
+        in: path
+        description: 삭제할 태그의 고유 식별 ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/api-projects-projectId486549215"
+              examples:
+                태그 삭제 성공:
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-03T16:21:02.4080582\"\
+                    }"
   /api/projects/{projectId}/invite:
     post:
       tags:
@@ -438,7 +462,7 @@ paths:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"successEmails\":[\"\
                     success@test.com\"],\"failedEmails\":[\"notfound@test.com (존재하\
                     지 않는 회원)\",\"already@test.com (이미 참여 중인 팀원)\"]},\"timestamp\"\
-                    :\"2026-06-03T16:10:53.1627677\"}"
+                    :\"2026-06-03T16:20:29.8033914\"}"
 components:
   schemas:
     CreateProjectRequest:
@@ -466,19 +490,6 @@ components:
         status:
           type: string
           description: 프로젝트 상태
-    UpdateTagRequest:
-      title: UpdateTagRequest
-      required:
-      - color
-      - name
-      type: object
-      properties:
-        color:
-          type: string
-          description: 태그 색
-        name:
-          type: string
-          description: 태그 이름
     api-reissue2116916718:
       required:
       - status
@@ -503,6 +514,19 @@ components:
         status:
           type: string
           description: 응답 상태
+    UpdateTagRequest:
+      title: UpdateTagRequest
+      required:
+      - color
+      - name
+      type: object
+      properties:
+        color:
+          type: string
+          description: 태그 색
+        name:
+          type: string
+          description: 태그 이름
     InviteMembersRequest:
       title: InviteMembersRequest
       required:
@@ -518,23 +542,6 @@ components:
             - type: boolean
             - type: string
             - type: number
-    SignupRequest:
-      title: SignupRequest
-      required:
-      - email
-      - name
-      - password
-      type: object
-      properties:
-        password:
-          type: string
-          description: 사용자 비밀번호
-        name:
-          type: string
-          description: 사용자 이름
-        email:
-          type: string
-          description: 사용자 이메일
     TagResponse:
       title: TagResponse
       required:
@@ -556,6 +563,23 @@ components:
         status:
           type: string
           description: 응답 상태
+    SignupRequest:
+      title: SignupRequest
+      required:
+      - email
+      - name
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: 사용자 비밀번호
+        name:
+          type: string
+          description: 사용자 이름
+        email:
+          type: string
+          description: 사용자 이메일
     UpdateProjectResponse:
       title: UpdateProjectResponse
       required:
@@ -615,7 +639,7 @@ components:
         status:
           type: string
           description: "변경할 프로젝트 진행 상태 (ACTIVE, COMPLETED, ARCHIVED)"
-    api-logout229656191:
+    api-reissue229656191:
       required:
       - body
       - status
@@ -927,6 +951,8 @@ components:
         status:
           type: string
           description: 응답 상태
+    api-projects-projectId486549215:
+      type: object
     InviteMembersResponse:
       title: InviteMembersResponse
       required:
@@ -964,5 +990,3 @@ components:
         status:
           type: string
           description: 응답 상태
-    api-projects-projectId486549215:
-      type: object
