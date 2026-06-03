@@ -2,7 +2,9 @@ package com.project.devlog.domain.task.controller;
 
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
+import com.project.devlog.domain.task.dto.response.TaskPriorityListResponse;
 import com.project.devlog.domain.task.dto.response.TaskStatusListResponse;
+import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.domain.task.service.TaskService;
@@ -27,7 +29,7 @@ public class TaskController {
     private final TaskMapper taskMapper;
 
     @PostMapping("/api/task")
-    public ResponseEntity<TaskIdResponse> create( @Valid @RequestBody CreateTaskRequest request ) {
+    public ResponseEntity<TaskIdResponse> create(@Valid @RequestBody CreateTaskRequest request) {
         Long taskId = taskService.create(request);
         URI location = UrlCreator.createUri(DEFAULT_URL, taskId);
         return ResponseEntity.created(location).body(taskMapper.toIdDto(taskId));
@@ -37,5 +39,11 @@ public class TaskController {
     public ResponseEntity<TaskStatusListResponse> getStatusList() {
         List<TaskStatus> statusList = taskService.getStatusList();
         return ResponseEntity.ok().body(taskMapper.toTaskStatusResponse(statusList));
+    }
+
+    @GetMapping("/api/tasks/priority")
+    public ResponseEntity<TaskPriorityListResponse> getPriorityList() {
+        List<TaskPriority> priorities = taskService.getPriorityList();
+        return ResponseEntity.ok().body(taskMapper.toTaskPriorityListResponse(priorities));
     }
 }

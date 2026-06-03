@@ -7,6 +7,7 @@ import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.TaskTag;
+import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.domain.task.repository.TaskRepository;
@@ -74,5 +75,9 @@ public class TaskService {
 
     public List<TaskStatus> getStatusList() {
         return Arrays.asList(TaskStatus.values());
+    }
+
+    public List<TaskPriority> getPriorityList() {
+        return Arrays.asList(TaskPriority.values());
     }
 }
