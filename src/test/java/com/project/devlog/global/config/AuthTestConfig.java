@@ -10,6 +10,9 @@ import com.project.devlog.domain.project.service.ProjectService;
 import com.project.devlog.domain.tag.mapper.TagMapper;
 import com.project.devlog.domain.tag.mock.TagMock;
 import com.project.devlog.domain.tag.service.TagService;
+import com.project.devlog.domain.task.mapper.TaskMapper;
+import com.project.devlog.domain.task.mock.TaskMock;
+import com.project.devlog.domain.task.service.TaskService;
 import com.project.devlog.domain.user.mapper.UserMapper;
 import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.domain.user.repository.UserRepository;
@@ -156,5 +159,16 @@ public class AuthTestConfig {
     @Bean
     public TagMock tagMock() {
         return new TagMock();
+    }
+
+    @Bean
+    public TaskService taskService() { return Mockito.mock(TaskService.class); }
+
+    @Bean
+    public TaskMapper taskMapper() { return new TaskMapper(); }
+
+    @Bean
+    public TaskMock taskMock() {
+        return new TaskMock();
     }
 }

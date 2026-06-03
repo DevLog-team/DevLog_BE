@@ -1,0 +1,15 @@
+### 작업 생성
+POST http://localhost:8080/api/task
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "projectId": 1,
+  "title": "작업 이름",
+  "description": "작업 설명",
+  "status": "TODO",
+  "priority": "HIGH",
+  "dueDate": "2026-07-07",
+  "tagIds": [1],
+  "assigneeId": 41
+}
