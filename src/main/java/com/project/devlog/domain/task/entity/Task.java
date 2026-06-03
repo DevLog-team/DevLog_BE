@@ -19,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,25 +57,25 @@ public class Task extends BaseDateTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User assignee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
 
     @OneToMany(mappedBy = "task")
-    private List<TaskTag> tags;
+    private List<TaskTag> tags = new ArrayList<>();
 
     @Builder
     private Task(Long id, String title, String description, TaskStatus status, TaskPriority priority, LocalDate dueDate,
-                User user, Project project) {
+                User assignee, Project project) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.priority = priority;
         this.dueDate = dueDate;
-        this.user = user;
+        this.assignee = assignee;
         this.project = project;
     }
 }
