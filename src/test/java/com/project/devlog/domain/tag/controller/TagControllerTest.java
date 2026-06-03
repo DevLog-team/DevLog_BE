@@ -13,6 +13,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.tag.dto.request.CreateTagRequest;
+import com.project.devlog.domain.tag.dto.request.UpdateTagRequest;
 import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.tag.mock.TagMock;
 import com.project.devlog.domain.tag.service.TagService;
@@ -194,6 +195,60 @@ class TagControllerTest {
                                                                     .description("태그 이름"),
                                                             fieldWithPath("body.tags[].color").type(JsonFieldType.STRING)
                                                                     .description("태그 색"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간"))
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("태그 수정")
+    class update {
+        @Test
+        @DisplayName("성공: 태그 수정 및 tagId 반환")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Tag tag = tagMock.domainMock();
+            UpdateTagRequest requestDto = tagMock.updateTagRequest();
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            given(tagService.update(any(), any())).willReturn(tag.getId());
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.put("/api/tags/{tagId}", tag.getId())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.tagId").isNumber())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("태그 수정 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Tag")
+                                                    .description("태그 수정 API")
+                                                    .requestSchema(Schema.schema("UpdateTagRequest"))
+                                                    .requestFields(
+                                                            fieldWithPath("name").type(JsonFieldType.STRING)
+                                                                    .description("태그 이름"),
+                                                            fieldWithPath("color").type(JsonFieldType.STRING)
+                                                                    .description("태그 색")
+                                                    )
+                                                    .responseSchema(Schema.schema("TagResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
+                                                            fieldWithPath("body.tagId").type(JsonFieldType.NUMBER)
+                                                                    .description("태그 ID"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 시간"))
                                                     .build()

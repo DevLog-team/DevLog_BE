@@ -1,6 +1,7 @@
 package com.project.devlog.domain.tag.mock;
 
 import com.project.devlog.domain.tag.dto.request.CreateTagRequest;
+import com.project.devlog.domain.tag.dto.request.UpdateTagRequest;
 import com.project.devlog.domain.tag.entity.Tag;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,10 @@ public class TagMock {
 
     public CreateTagRequest createTagRequest() {
         return new CreateTagRequest(name, color);
+    }
+
+    public UpdateTagRequest updateTagRequest() {
+        return new UpdateTagRequest("수정된 이름", "수정된 색");
     }
 
 }
