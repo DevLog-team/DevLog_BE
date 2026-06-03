@@ -13,6 +13,7 @@ import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
+import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mock.TaskMock;
 import com.project.devlog.domain.task.service.TaskService;
@@ -154,6 +155,47 @@ class TaskControllerTest {
                                                                     .description("응답 상태 코드/메시지"),
                                                             fieldWithPath("body.taskStatusList").type(JsonFieldType.ARRAY)
                                                                     .description("작업 상태 목록"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시"))
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 우선순위 목록 조회")
+    class Priority {
+
+        @Test
+        @DisplayName("성공: 작업 우선순위 목록 조회")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            given(taskService.getPriorityList()).willReturn(List.of(TaskPriority.values()));
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/priority")
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.taskPriorities").isArray())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 우선순위 목록 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("작업 우선순위 목록 조회  API")
+                                                    .responseSchema(Schema.schema("TaskPriorityListResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+                                                            fieldWithPath("body.taskPriorities").type(JsonFieldType.ARRAY)
+                                                                    .description("작업 우선순위 목록"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 발행 일시"))
                                                     .build()
