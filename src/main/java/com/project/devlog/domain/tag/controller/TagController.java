@@ -2,6 +2,7 @@ package com.project.devlog.domain.tag.controller;
 
 import com.project.devlog.domain.tag.dto.request.CreateTagRequest;
 import com.project.devlog.domain.tag.dto.response.TagIdResponse;
+import com.project.devlog.domain.tag.dto.response.TagListResponse;
 import com.project.devlog.domain.tag.dto.response.TagResponse;
 import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.tag.mapper.TagMapper;
@@ -9,6 +10,7 @@ import com.project.devlog.domain.tag.service.TagService;
 import com.project.devlog.global.util.UrlCreator;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +36,14 @@ public class TagController {
     }
 
     @GetMapping("/api/tags/{tagId}")
-    public ResponseEntity<TagResponse> get(@PathVariable Long tagId) {
+    public ResponseEntity<TagResponse> getOne(@PathVariable Long tagId) {
         Tag tag = tagService.getOne(tagId);
         return ResponseEntity.ok().body(tagMapper.toTagDto(tag));
     }
 
+    @GetMapping("/api/tags")
+    public ResponseEntity<TagListResponse> getList() {
+        List<Tag> tags = tagService.getList();
+        return ResponseEntity.ok().body(tagMapper.toTagListDto(tags));
+    }
 }

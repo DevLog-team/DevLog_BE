@@ -6,6 +6,7 @@ import com.project.devlog.domain.tag.mapper.TagMapper;
 import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.TagErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,5 +40,9 @@ public class TagService {
     private Tag findById(Long tagId) {
         return tagRepository.findByIdAndIsDeletedFalse(tagId)
                 .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+    }
+
+    public List<Tag> getList() {
+        return tagRepository.findAllByisDeletedFalse();
     }
 }
