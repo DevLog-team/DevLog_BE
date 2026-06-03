@@ -31,4 +31,13 @@ public class TagService {
             throw new BusinessException(TagErrorCode.DUPLICATE_TAG_NAME);
         }
     }
+
+    public Tag getOne(Long tagId) {
+        return findById(tagId);
+    }
+
+    private Tag findById(Long tagId) {
+        return tagRepository.findByIdAndIsDeletedFalse(tagId)
+                .orElseThrow(() -> new BusinessException(TagErrorCode.TAG_NOT_FOUND));
+    }
 }

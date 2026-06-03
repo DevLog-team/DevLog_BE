@@ -2,6 +2,7 @@ package com.project.devlog.domain.tag.mapper;
 
 import com.project.devlog.domain.tag.dto.request.CreateTagRequest;
 import com.project.devlog.domain.tag.dto.response.TagIdResponse;
+import com.project.devlog.domain.tag.dto.response.TagResponse;
 import com.project.devlog.domain.tag.entity.Tag;
 import org.springframework.stereotype.Component;
 
@@ -16,5 +17,13 @@ public class TagMapper {
                 .name(request.name())
                 .color(request.color())
                 .build();
+    }
+
+    public TagResponse toTagDto(Tag tag) {
+        return new TagResponse(
+                tag.getId(),
+                tag.getName(),
+                tag.getColor()
+        );
     }
 }
