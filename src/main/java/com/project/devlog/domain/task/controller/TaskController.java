@@ -2,14 +2,17 @@ package com.project.devlog.domain.task.controller;
 
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
+import com.project.devlog.domain.task.dto.response.TaskStatusListResponse;
+import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.domain.task.service.TaskService;
-import com.project.devlog.global.annotation.CurrentUser;
 import com.project.devlog.global.util.UrlCreator;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,5 +31,11 @@ public class TaskController {
         Long taskId = taskService.create(request);
         URI location = UrlCreator.createUri(DEFAULT_URL, taskId);
         return ResponseEntity.created(location).body(taskMapper.toIdDto(taskId));
+    }
+
+    @GetMapping("/api/tasks/status")
+    public ResponseEntity<TaskStatusListResponse> getStatusList() {
+        List<TaskStatus> statusList = taskService.getStatusList();
+        return ResponseEntity.ok().body(taskMapper.toTaskStatusResponse(statusList));
     }
 }

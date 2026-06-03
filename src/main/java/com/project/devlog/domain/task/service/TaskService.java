@@ -7,6 +7,7 @@ import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.TaskTag;
+import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.domain.task.repository.TaskRepository;
 import com.project.devlog.domain.task.repository.TaskTagRepository;
@@ -16,6 +17,7 @@ import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.ProjectErrorCode;
 import com.project.devlog.global.exception.errorcode.TagErrorCode;
 import com.project.devlog.global.exception.errorcode.UserErrorCode;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,4 +72,7 @@ public class TaskService {
         return request.tagIds() != null && !request.tagIds().isEmpty();
     }
 
+    public List<TaskStatus> getStatusList() {
+        return Arrays.asList(TaskStatus.values());
+    }
 }

@@ -4,9 +4,12 @@ import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
+import com.project.devlog.domain.task.dto.response.TaskStatusListResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.TaskTag;
+import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.user.entity.User;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,5 +35,9 @@ public class TaskMapper {
                 .task(task)
                 .tag(tag)
                 .build();
+    }
+
+    public TaskStatusListResponse toTaskStatusResponse(List<TaskStatus> statusList) {
+        return new TaskStatusListResponse(statusList);
     }
 }
