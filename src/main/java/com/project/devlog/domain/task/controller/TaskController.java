@@ -1,6 +1,7 @@
 package com.project.devlog.domain.task.controller;
 
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
+import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
 import com.project.devlog.domain.task.dto.response.TaskPriorityListResponse;
 import com.project.devlog.domain.task.dto.response.TaskStatusListResponse;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -45,5 +47,11 @@ public class TaskController {
     public ResponseEntity<TaskPriorityListResponse> getPriorityList() {
         List<TaskPriority> priorities = taskService.getPriorityList();
         return ResponseEntity.ok().body(taskMapper.toTaskPriorityListResponse(priorities));
+    }
+
+    @GetMapping("/api/tasks/kanban")
+    public ResponseEntity<KanbanBoardResponse> getTasksForKanban(@RequestParam(name = "projectId") Long projectId) {
+        KanbanBoardResponse responseData = taskService.getKanbanBoard(projectId);
+        return ResponseEntity.ok().body(responseData);
     }
 }

@@ -5,6 +5,8 @@ import com.project.devlog.domain.project.repository.ProjectRepository;
 import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
+import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
+import com.project.devlog.domain.task.dto.response.KanbanTaskResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.TaskTag;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
@@ -18,12 +20,17 @@ import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.ProjectErrorCode;
 import com.project.devlog.global.exception.errorcode.TagErrorCode;
 import com.project.devlog.global.exception.errorcode.UserErrorCode;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TaskService {
 
@@ -79,5 +86,27 @@ public class TaskService {
 
     public List<TaskPriority> getPriorityList() {
         return Arrays.asList(TaskPriority.values());
+    }
+
+    public KanbanBoardResponse getKanbanBoard(Long projectId) {
+        List<Task> tasks = taskRepository.findAllByProjectIdAndIsDeletedFalse(projectId);
+
+        Map<TaskStatus, List<KanbanTaskResponse>> kanbanMap = groupTasksByStatus(tasks);
+
+        return new KanbanBoardResponse(kanbanMap);
+    }
+
+    private Map<TaskStatus, List<KanbanTaskResponse>> groupTasksByStatus(List<Task> tasks) {
+        Map<TaskStatus, List<KanbanTaskResponse>> kanbanMap = new EnumMap<>(TaskStatus.class);
+        for (TaskStatus status : TaskStatus.values()) {
+            kanbanMap.put(status, new ArrayList<>());
+        }
+
+        tasks.forEach(task -> {
+            KanbanTaskResponse taskDto = taskMapper.toKanbanTaskResponse(task);
+            kanbanMap.get(task.getStatus()).add(taskDto);
+        });
+
+        return kanbanMap;
     }
 }
