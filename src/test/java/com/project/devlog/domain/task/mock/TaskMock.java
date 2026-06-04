@@ -2,12 +2,17 @@ package com.project.devlog.domain.task.mock;
 
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
+import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
+import com.project.devlog.domain.task.dto.response.KanbanTaskResponse;
+import com.project.devlog.domain.task.dto.response.TagResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.user.entity.User;
 import java.time.LocalDate;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class TaskMock {
 
@@ -47,7 +52,7 @@ public class TaskMock {
         );
     }
 
-    public Task taskDomainMock(User assignee, Project project) {
+    public Task taskDomainMock(User assignee, Project project, TaskStatus status, TaskPriority priority) {
         Task task = Task.builder()
                 .id(taskId)
                 .title(title)
@@ -60,5 +65,36 @@ public class TaskMock {
                 .build();
 
         return task;
+    }
+
+    public KanbanTaskResponse kanbanTaskResponseMock(TaskStatus status) {
+        TagResponse tagMock = new TagResponse(
+                10L,
+                "Frontend",
+                "#3357FF"
+        );
+
+        return KanbanTaskResponse.builder()
+                .id(taskId)
+                .title(title)
+                .description(description)
+                .status(status)
+                .priority(priority)
+                .dueDate(dueDate)
+                .assigneeName("데브로그팀원")
+                .tags(List.of(tagMock))
+                .build();
+    }
+
+    public KanbanBoardResponse kanbanBoardResponseMock() {
+        Map<TaskStatus, List<KanbanTaskResponse>> mockMap = new EnumMap<>(TaskStatus.class);
+
+        for (TaskStatus status : TaskStatus.values()) {
+            mockMap.put(status, new java.util.ArrayList<>());
+        }
+
+        mockMap.get(TaskStatus.TODO).add(kanbanTaskResponseMock(TaskStatus.TODO));
+
+        return new KanbanBoardResponse(mockMap);
     }
 }

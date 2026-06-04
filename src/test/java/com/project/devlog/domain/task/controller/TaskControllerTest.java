@@ -5,6 +5,7 @@ import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -12,12 +13,12 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
-import com.project.devlog.domain.task.dto.response.TaskIdResponse;
+import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
+import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.domain.task.mock.TaskMock;
 import com.project.devlog.domain.task.service.TaskService;
-import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
@@ -198,6 +199,92 @@ class TaskControllerTest {
                                                                     .description("작업 우선순위 목록"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 발행 일시"))
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("KanbanBoard 작업 목록 조회")
+    class KanbanBoard {
+
+        @Test
+        @DisplayName("성공: 작업을 상태값 별로 그룹화하여 반환")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long projectId = 1L;
+            KanbanBoardResponse kanbanBoardResponse = taskMock.kanbanBoardResponseMock();
+
+            given(taskService.getKanbanBoard(any())).willReturn(kanbanBoardResponse);
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/kanban")
+                    .param("projectId", String.valueOf(projectId))
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.board").isMap())
+                    .andExpect(jsonPath("$.body.board.TODO").isArray())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("칸반보드 작업 목록 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("프로젝트별 칸반보드 작업 목록 조회 API")
+                                                    .queryParameters(
+                                                            parameterWithName("projectId").description("조회할 프로젝트 고유 식별 ID"))
+                                                    .responseSchema(Schema.schema("KanbanBoardResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+
+                                                            fieldWithPath("body.board").type(JsonFieldType.OBJECT)
+                                                                    .description("상태별 칸반보드 데이터 Map"),
+                                                            fieldWithPath("body.board.TODO").type(JsonFieldType.ARRAY)
+                                                                    .description("할 일(TODO) 작업 목록"),
+                                                            fieldWithPath("body.board.IN_PROGRESS").type(JsonFieldType.ARRAY)
+                                                                    .description("진행 중(IN_PROGRESS) 작업 목록"),
+                                                            fieldWithPath("body.board.DONE").type(JsonFieldType.ARRAY)
+                                                                    .description("완료(DONE) 작업 목록"),
+                                                            fieldWithPath("body.board.HOLD").type(JsonFieldType.ARRAY)
+                                                                    .description("보류(HOLD) 작업 목록"),
+
+                                                            fieldWithPath("body.board.*[].id").type(JsonFieldType.NUMBER)
+                                                                    .description("작업 고유 ID"),
+                                                            fieldWithPath("body.board.*[].title").type(JsonFieldType.STRING)
+                                                                    .description("작업 제목"),
+                                                            fieldWithPath("body.board.*[].description").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .optional().description("작업 상세 설명"),
+                                                            fieldWithPath("body.board.*[].status").type(JsonFieldType.STRING)
+                                                                    .description("작업 현재 상태"),
+                                                            fieldWithPath("body.board.*[].priority").type(JsonFieldType.STRING)
+                                                                    .description("우선순위 (HIGH, MEDIUM, LOW)"),
+                                                            fieldWithPath("body.board.*[].dueDate").type(JsonFieldType.STRING)
+                                                                    .description("마감일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.board.*[].assigneeName").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .optional().description("담당자 이름"),
+                                                            fieldWithPath("body.board.*[].tags").type(JsonFieldType.ARRAY)
+                                                                    .description("작업 태그 목록"),
+                                                            fieldWithPath("body.board.*[].tags[].id").type(JsonFieldType.NUMBER)
+                                                                    .description("태그 고유 ID"),
+                                                            fieldWithPath("body.board.*[].tags[].name").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .description("태그 이름"),
+                                                            fieldWithPath("body.board.*[].tags[].color").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .description("태그 색상 헥사 코드"),
+
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시")
+                                                    )
                                                     .build()
                                     )
                             )

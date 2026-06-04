@@ -14,10 +14,17 @@ Authorization: Bearer {{accessToken}}
   "assigneeId": 41
 }
 
+
 ### 작업 상태 목록 조회
 GET http://localhost:8080/api/tasks/status
 Authorization: Bearer {{accessToken}}
 
+
 ### 작업 상태 목록 조회
 GET http://localhost:8080/api/tasks/priority
+Authorization: Bearer {{accessToken}}
+
+
+### 칸반보드 작업 목록 조회
+GET http://localhost:8080/api/tasks/kanban?projectId=1
 Authorization: Bearer {{accessToken}}
