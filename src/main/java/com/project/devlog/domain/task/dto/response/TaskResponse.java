@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record KanbanTaskResponse(
+public record TaskResponse(
         Long id,
         String title,
         String description,

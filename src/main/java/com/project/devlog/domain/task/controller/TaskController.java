@@ -1,10 +1,13 @@
 package com.project.devlog.domain.task.controller;
 
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
+import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
+import com.project.devlog.domain.task.dto.response.TaskListResponse;
 import com.project.devlog.domain.task.dto.response.TaskPriorityListResponse;
 import com.project.devlog.domain.task.dto.response.TaskStatusListResponse;
+import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
@@ -14,8 +17,13 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,4 +62,15 @@ public class TaskController {
         KanbanBoardResponse responseData = taskService.getKanbanBoard(projectId);
         return ResponseEntity.ok().body(responseData);
     }
+
+    @GetMapping("/api/tasks")
+    public ResponseEntity<TaskListResponse> getList(
+            @RequestParam(name = "projectId") Long projectId,
+            @ModelAttribute TaskSearchCondition condition,
+            @PageableDefault(size = 10, sort = "dueDate", direction = Direction.ASC) Pageable pageable
+    ) {
+        Page<Task> taskList = taskService.getList(projectId, condition, pageable);
+        return ResponseEntity.ok().body(taskMapper.toTaskListResponse(taskList));
+    }
+
 }
