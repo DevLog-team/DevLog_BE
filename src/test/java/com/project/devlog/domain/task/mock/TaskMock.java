@@ -3,8 +3,9 @@ package com.project.devlog.domain.task.mock;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
-import com.project.devlog.domain.task.dto.response.KanbanTaskResponse;
 import com.project.devlog.domain.task.dto.response.TagResponse;
+import com.project.devlog.domain.task.dto.response.TaskListResponse;
+import com.project.devlog.domain.task.dto.response.TaskResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
@@ -13,6 +14,9 @@ import java.time.LocalDate;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 public class TaskMock {
 
@@ -67,14 +71,14 @@ public class TaskMock {
         return task;
     }
 
-    public KanbanTaskResponse kanbanTaskResponseMock(TaskStatus status) {
+    public TaskResponse kanbanTaskResponseMock(TaskStatus status) {
         TagResponse tagMock = new TagResponse(
                 10L,
                 "Frontend",
                 "#3357FF"
         );
 
-        return KanbanTaskResponse.builder()
+        return TaskResponse.builder()
                 .id(taskId)
                 .title(title)
                 .description(description)
@@ -87,7 +91,7 @@ public class TaskMock {
     }
 
     public KanbanBoardResponse kanbanBoardResponseMock() {
-        Map<TaskStatus, List<KanbanTaskResponse>> mockMap = new EnumMap<>(TaskStatus.class);
+        Map<TaskStatus, List<TaskResponse>> mockMap = new EnumMap<>(TaskStatus.class);
 
         for (TaskStatus status : TaskStatus.values()) {
             mockMap.put(status, new java.util.ArrayList<>());
@@ -97,4 +101,23 @@ public class TaskMock {
 
         return new KanbanBoardResponse(mockMap);
     }
+
+    public Page<Task> taskPageMock(Pageable pageable) {
+
+        User mockAssignee = User.builder()
+                .id(1L)
+                .name("개발자A")
+                .build();
+
+        Project mockProject = Project.builder()
+                .id(1L)
+                .title("테스트 프로젝트")
+                .startDate(java.time.LocalDate.now())
+                .endDate(java.time.LocalDate.now().plusMonths(1))
+                .build();
+
+        List<Task> content = List.of(taskDomainMock(mockAssignee, mockProject, TaskStatus.TODO, TaskPriority.HIGH));
+        return new PageImpl<>(content, pageable, content.size());
+    }
+
 }

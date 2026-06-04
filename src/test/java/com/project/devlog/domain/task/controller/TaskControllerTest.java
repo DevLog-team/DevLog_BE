@@ -13,7 +13,9 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
+import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
+import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
@@ -30,6 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -281,6 +287,113 @@ class TaskControllerTest {
                                                             fieldWithPath("body.board.*[].tags[].color").type(
                                                                             JsonFieldType.STRING)
                                                                     .description("태그 색상 헥사 코드"),
+
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 목록 조회")
+    class GetList {
+
+        @Test
+        @DisplayName("성공: 조건별 검색 및 페이지네이션이 적용된 작업 목록 반환")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long projectId = 1L;
+
+            Pageable pageable = PageRequest.of(0, 10, Sort.by("dueDate").ascending());
+
+            // Service가 반환할 Page<Task> 모킹
+            Page<Task> mockTaskPage = taskMock.taskPageMock(pageable);
+            given(taskService.getList(any(Long.class), any(TaskSearchCondition.class), any(Pageable.class)))
+                    .willReturn(mockTaskPage);
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks")
+                    .param("projectId", String.valueOf(projectId))
+                    .param("title", "API")
+                    .param("assigneeId", "1")
+                    .param("status", "TODO")
+                    .param("priority", "HIGH")
+                    .param("page", "0")
+                    .param("size", "10")
+                    .param("sort", "dueDate,asc")
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.content").isArray())
+                    .andExpect(jsonPath("$.body.pageInfo.currentPage").value(1))
+                    .andExpect(jsonPath("$.body.pageInfo.pageSize").value(10))
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 목록 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("검색 조건 및 페이지네이션을 포함한 작업 목록 조회 API")
+                                                    .queryParameters(
+                                                            parameterWithName("projectId").description("조회할 프로젝트 고유 식별 ID"),
+                                                            parameterWithName("title").optional().description("검색할 작업 제목 키워드"),
+                                                            parameterWithName("assigneeId").optional()
+                                                                    .description("담당자 고유 ID (전체 조회시 0 또는 NULL)"),
+                                                            parameterWithName("status").optional().description(
+                                                                    "작업 상태 필터 (ALL, TODO, IN_PROGRESS, DONE, HOLD)"),
+                                                            parameterWithName("priority").optional()
+                                                                    .description("우선순위 필터 (ALL, LOW, MEDIUM, HIGH, URGENT)"),
+                                                            parameterWithName("page").optional()
+                                                                    .description("조회할 페이지 번호 (0부터 시작, 기본값: 0)"),
+                                                            parameterWithName("size").optional()
+                                                                    .description("한 페이지당 보여줄 데이터 개수 (기본값: 10)"),
+                                                            parameterWithName("sort").optional()
+                                                                    .description("정렬 기준 필드 및 방향 (기본값: dueDate,asc)")
+                                                    )
+                                                    .responseSchema(Schema.schema("TaskListResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+
+                                                            fieldWithPath("body").type(JsonFieldType.OBJECT)
+                                                                    .description("응답 본문"),
+                                                            fieldWithPath("body.content").type(JsonFieldType.ARRAY)
+                                                                    .description("조회된 작업 목록 배열"),
+                                                            fieldWithPath("body.content[].taskId").type(JsonFieldType.NUMBER)
+                                                                    .description("작업 고유 ID"),
+                                                            fieldWithPath("body.content[].title").type(JsonFieldType.STRING)
+                                                                    .description("작업 제목"),
+                                                            fieldWithPath("body.content[].assigneeName").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .optional().description("담당자 이름"),
+                                                            fieldWithPath("body.content[].status").type(JsonFieldType.STRING)
+                                                                    .description("작업 상태"),
+                                                            fieldWithPath("body.content[].priority").type(JsonFieldType.STRING)
+                                                                    .description("작업 우선순위"),
+                                                            fieldWithPath("body.content[].dueDate").type(JsonFieldType.STRING)
+                                                                    .description("마감일 (YYYY-MM-DD)"),
+
+                                                            fieldWithPath("body.pageInfo").type(JsonFieldType.OBJECT)
+                                                                    .description("페이징 메타데이터"),
+                                                            fieldWithPath("body.pageInfo.currentPage").type(
+                                                                    JsonFieldType.NUMBER).description("현재 페이지 번호 (1-indexed)"),
+                                                            fieldWithPath("body.pageInfo.pageSize").type(JsonFieldType.NUMBER)
+                                                                    .description("페이지 당 노출 데이터 개수"),
+                                                            fieldWithPath("body.pageInfo.totalElements").type(
+                                                                    JsonFieldType.NUMBER).description("총 데이터 개수"),
+                                                            fieldWithPath("body.pageInfo.totalPages").type(JsonFieldType.NUMBER)
+                                                                    .description("총 페이지 수"),
+                                                            fieldWithPath("body.pageInfo.isFirst").type(JsonFieldType.BOOLEAN)
+                                                                    .description("첫 페이지 여부"),
+                                                            fieldWithPath("body.pageInfo.isLast").type(JsonFieldType.BOOLEAN)
+                                                                    .description("마지막 페이지 여부"),
 
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 발행 일시")

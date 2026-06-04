@@ -20,7 +20,7 @@ import com.project.devlog.domain.tag.mock.TagMock;
 import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
-import com.project.devlog.domain.task.dto.response.KanbanTaskResponse;
+import com.project.devlog.domain.task.dto.response.TaskResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.TaskTag;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
@@ -171,8 +171,8 @@ class TaskServiceTest {
 
             List<Task> tasks = List.of(todoTask, inProgressTask);
 
-            KanbanTaskResponse todoDto = mock(KanbanTaskResponse.class);
-            KanbanTaskResponse inProgressDto = mock(KanbanTaskResponse.class);
+            TaskResponse todoDto = mock(TaskResponse.class);
+            TaskResponse inProgressDto = mock(TaskResponse.class);
 
             given(taskRepository.findAllByProjectIdAndIsDeletedFalse(projectId)).willReturn(tasks);
 
