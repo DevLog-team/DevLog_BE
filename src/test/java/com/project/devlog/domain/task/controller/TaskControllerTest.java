@@ -3,6 +3,7 @@ package com.project.devlog.domain.task.controller;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -29,6 +30,7 @@ import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
+import com.project.devlog.global.security.evaluator.TaskSecurityEvaluator;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -73,6 +75,9 @@ class TaskControllerTest {
     @Autowired
     private TaskMapper taskMapper;
 
+    @Autowired
+    private TaskSecurityEvaluator taskSecurityEvaluator;
+
     @Nested
     @DisplayName("작업 생성 테스트")
     class Create {
@@ -85,6 +90,8 @@ class TaskControllerTest {
             Long taskId = 1L;
             CreateTaskRequest requestDto = taskMock.createTaskRequestMock();
             String content = objectMapper.writeValueAsString(requestDto);
+
+            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
 
             given(taskService.create(any(CreateTaskRequest.class))).willReturn(taskId);
 
@@ -235,6 +242,8 @@ class TaskControllerTest {
             Long projectId = 1L;
             KanbanBoardResponse kanbanBoardResponse = taskMock.kanbanBoardResponseMock();
 
+            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
+
             given(taskService.getKanbanBoard(any())).willReturn(kanbanBoardResponse);
 
             // when
@@ -321,6 +330,8 @@ class TaskControllerTest {
             Long projectId = 1L;
 
             Pageable pageable = PageRequest.of(0, 10, Sort.by("dueDate").ascending());
+
+            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
 
             // Service가 반환할 Page<Task> 모킹
             Page<Task> mockTaskPage = taskMock.taskPageMock(pageable);
@@ -425,16 +436,20 @@ class TaskControllerTest {
         @MockCustomUser
         void success() throws Exception {
             // given
+            Long projectId = 1L;
             Long taskId = 1L;
 
             User user = userMock.domainMock();
             Project project = projectMock.domainMock(ProjectStatus.ACTIVE);
             Task task = taskMock.DomainWithTagsMock(user, project, TaskStatus.TODO, TaskPriority.HIGH);
 
+            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
+
             given(taskService.getDetails(any())).willReturn(task);
 
             // when
             ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/{taskId}", taskId)
+                    .param("projectId", String.valueOf(projectId))
                     .accept(MediaType.APPLICATION_JSON));
 
             // then
@@ -448,6 +463,8 @@ class TaskControllerTest {
                                             ResourceSnippetParameters.builder()
                                                     .tag("Task")
                                                     .description("작업 상세 조회 API")
+                                                    .queryParameters(
+                                                            parameterWithName("projectId").description("조회할 프로젝트 고유 식별 ID"))
                                                     .pathParameters(
                                                             parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
                                                     .responseSchema(Schema.schema("TaskResponse"))

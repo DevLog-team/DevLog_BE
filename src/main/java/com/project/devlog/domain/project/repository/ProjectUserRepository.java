@@ -20,7 +20,7 @@ public interface ProjectUserRepository extends JpaRepository<ProjectUser, Long> 
 
     List<ProjectUser> findByProjectIdAndIsDeletedFalse(Long projectId);
 
-    boolean existsByProjectIdAndUserIdAndIsDeletedFalse(Long projectId, Long id);
+    boolean existsByProjectIdAndUserIdAndIsDeletedFalse(Long projectId, Long userId);
 
     @Query("select pu from ProjectUser pu " +
            "join fetch pu.user u " +

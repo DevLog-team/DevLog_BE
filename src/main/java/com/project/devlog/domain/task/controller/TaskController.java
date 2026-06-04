@@ -13,6 +13,7 @@ import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.domain.task.service.TaskService;
+import com.project.devlog.global.annotation.CurrentUser;
 import com.project.devlog.global.util.UrlCreator;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +43,10 @@ public class TaskController {
     private final TaskMapper taskMapper;
 
     @PostMapping("/api/task")
-    public ResponseEntity<TaskIdResponse> create(@Valid @RequestBody CreateTaskRequest request) {
+    @PreAuthorize("@taskSecurity.isMember(#request.projectId(), #userId)")
+    public ResponseEntity<TaskIdResponse> create(
+            @CurrentUser Long userId,
+            @Valid @RequestBody CreateTaskRequest request) {
         Long taskId = taskService.create(request);
         URI location = UrlCreator.createUri(DEFAULT_URL, taskId);
         return ResponseEntity.created(location).body(taskMapper.toIdDto(taskId));
@@ -60,13 +65,19 @@ public class TaskController {
     }
 
     @GetMapping("/api/tasks/kanban")
-    public ResponseEntity<KanbanBoardResponse> getTasksForKanban(@RequestParam(name = "projectId") Long projectId) {
+    @PreAuthorize("@taskSecurity.isMember(#projectId, #userId)")
+    public ResponseEntity<KanbanBoardResponse> getTasksForKanban(
+            @CurrentUser Long userId,
+            @RequestParam(name = "projectId") Long projectId
+    ) {
         KanbanBoardResponse responseData = taskService.getKanbanBoard(projectId);
         return ResponseEntity.ok().body(responseData);
     }
 
     @GetMapping("/api/tasks")
+    @PreAuthorize("@taskSecurity.isMember(#projectId, #userId)")
     public ResponseEntity<TaskListResponse> getList(
+            @CurrentUser Long userId,
             @RequestParam(name = "projectId") Long projectId,
             @ModelAttribute TaskSearchCondition condition,
             @PageableDefault(size = 10, sort = "dueDate", direction = Direction.ASC) Pageable pageable
@@ -76,7 +87,12 @@ public class TaskController {
     }
 
     @GetMapping("/api/tasks/{taskId}")
-    public ResponseEntity<TaskResponse> getDetails( @PathVariable Long taskId ) {
+    @PreAuthorize("@taskSecurity.isMember(#projectId, #userId)")
+    public ResponseEntity<TaskResponse> getDetails(
+            @CurrentUser Long userId,
+            @RequestParam(name = "projectId") Long projectId,
+            @PathVariable Long taskId
+    ) {
         Task task = taskService.getDetails(taskId);
         return ResponseEntity.ok().body(taskMapper.toTaskResponse(task));
     }

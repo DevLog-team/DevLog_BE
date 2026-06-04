@@ -36,5 +36,5 @@ Authorization: Bearer {{accessToken}}
 
 
 ### 작업 상세 조회
-GET http://localhost:8080/api/tasks/1
+GET http://localhost:8080/api/tasks/1?projectId=1
 Authorization: Bearer {{accessToken}}
