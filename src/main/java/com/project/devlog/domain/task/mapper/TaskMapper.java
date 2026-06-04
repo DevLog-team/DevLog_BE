@@ -56,7 +56,7 @@ public class TaskMapper {
 
     public TaskResponse toKanbanTaskResponse(Task task) {
         return TaskResponse.builder()
-                .id(task.getId())
+                .taskId(task.getId())
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .status(task.getStatus())
@@ -64,16 +64,20 @@ public class TaskMapper {
                 .dueDate(task.getDueDate())
                 .assigneeName(
                         task.getAssignee() != null ? task.getAssignee().getName() : null)
-                .tags(task.getTags().stream()
-                        .filter(taskTag -> !taskTag.isDeleted())
-                        .map(taskTag -> toTagResponse(taskTag.getTag()))
-                        .collect(Collectors.toList()))
+                .tags(getTags(task))
                 .build();
+    }
+
+    private List<TagResponse> getTags(Task task) {
+        return task.getTags().stream()
+                .filter(taskTag -> !taskTag.isDeleted())
+                .map(taskTag -> toTagResponse(taskTag.getTag()))
+                .collect(Collectors.toList());
     }
 
     public TagResponse toTagResponse(Tag tag) {
         return TagResponse.builder()
-                .id(tag.getId())
+                .tagId(tag.getId())
                 .name(tag.getName())
                 .color(tag.getColor())
                 .build();
@@ -102,5 +106,18 @@ public class TaskMapper {
         );
 
         return new TaskListResponse(content, pageInfo);
+    }
+
+    public TaskResponse toTaskResponse(Task task) {
+        return TaskResponse.builder()
+                .taskId(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .status(task.getStatus())
+                .priority(task.getPriority())
+                .dueDate(task.getDueDate())
+                .assigneeName(task.getAssignee().getName())
+                .tags(getTags(task))
+                .build();
     }
 }

@@ -8,7 +8,7 @@ import lombok.Builder;
 
 @Builder
 public record TaskResponse(
-        Long id,
+        Long taskId,
         String title,
         String description,
         TaskStatus status,

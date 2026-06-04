@@ -6,6 +6,7 @@ import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
 import com.project.devlog.domain.task.dto.response.TaskListResponse;
 import com.project.devlog.domain.task.dto.response.TaskPriorityListResponse;
+import com.project.devlog.domain.task.dto.response.TaskResponse;
 import com.project.devlog.domain.task.dto.response.TaskStatusListResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
@@ -24,6 +25,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,4 +75,9 @@ public class TaskController {
         return ResponseEntity.ok().body(taskMapper.toTaskListResponse(taskList));
     }
 
+    @GetMapping("/api/tasks/{taskId}")
+    public ResponseEntity<TaskResponse> getDetails( @PathVariable Long taskId ) {
+        Task task = taskService.getDetails(taskId);
+        return ResponseEntity.ok().body(taskMapper.toTaskResponse(task));
+    }
 }

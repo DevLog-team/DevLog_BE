@@ -20,6 +20,7 @@ import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.ProjectErrorCode;
 import com.project.devlog.global.exception.errorcode.TagErrorCode;
+import com.project.devlog.global.exception.errorcode.TaskErrorCode;
 import com.project.devlog.global.exception.errorcode.UserErrorCode;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,5 +116,14 @@ public class TaskService {
 
     public Page<Task> getList(Long projectId, TaskSearchCondition condition, Pageable pageable) {
         return taskRepository.searchUserProjects(projectId, condition, pageable);
+    }
+
+    public Task getDetails(Long taskId) {
+        return findTaskByIdFetchUserAndTag(taskId);
+    }
+
+    private Task findTaskByIdFetchUserAndTag(Long taskId) {
+        return taskRepository.findByIdFetchUserAndTag(taskId)
+                .orElseThrow(() -> new BusinessException(TaskErrorCode.TASK_NOT_FOUND));
     }
 }
