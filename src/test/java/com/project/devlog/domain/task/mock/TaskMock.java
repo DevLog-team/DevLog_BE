@@ -11,6 +11,7 @@ import com.project.devlog.domain.task.entity.enums.TaskPriority;
 import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.user.entity.User;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class TaskMock {
         );
     }
 
-    public Task taskDomainMock(User assignee, Project project, TaskStatus status, TaskPriority priority) {
+    public Task DomainMock(User assignee, Project project, TaskStatus status, TaskPriority priority) {
         Task task = Task.builder()
                 .id(taskId)
                 .title(title)
@@ -71,7 +72,24 @@ public class TaskMock {
         return task;
     }
 
-    public TaskResponse kanbanTaskResponseMock(TaskStatus status) {
+    public Task DomainWithTagsMock(User assignee, Project project, TaskStatus status, TaskPriority priority) {
+        Task task = DomainMock(assignee, project, status, priority);
+
+        com.project.devlog.domain.tag.entity.Tag backendTag = com.project.devlog.domain.tag.entity.Tag.builder()
+                .id(10L)
+                .name("Backend")
+                .color("#FF5733")
+                .build();
+
+        com.project.devlog.domain.task.entity.TaskTag.builder()
+                .task(task)
+                .tag(backendTag)
+                .build();
+
+        return task;
+    }
+
+    public TaskResponse taskResponseMock(TaskStatus status) {
         TagResponse tagMock = new TagResponse(
                 10L,
                 "Frontend",
@@ -79,7 +97,7 @@ public class TaskMock {
         );
 
         return TaskResponse.builder()
-                .id(taskId)
+                .taskId(taskId)
                 .title(title)
                 .description(description)
                 .status(status)
@@ -94,10 +112,10 @@ public class TaskMock {
         Map<TaskStatus, List<TaskResponse>> mockMap = new EnumMap<>(TaskStatus.class);
 
         for (TaskStatus status : TaskStatus.values()) {
-            mockMap.put(status, new java.util.ArrayList<>());
+            mockMap.put(status, new ArrayList<>());
         }
 
-        mockMap.get(TaskStatus.TODO).add(kanbanTaskResponseMock(TaskStatus.TODO));
+        mockMap.get(TaskStatus.TODO).add(taskResponseMock(TaskStatus.TODO));
 
         return new KanbanBoardResponse(mockMap);
     }
@@ -116,7 +134,7 @@ public class TaskMock {
                 .endDate(java.time.LocalDate.now().plusMonths(1))
                 .build();
 
-        List<Task> content = List.of(taskDomainMock(mockAssignee, mockProject, TaskStatus.TODO, TaskPriority.HIGH));
+        List<Task> content = List.of(DomainMock(mockAssignee, mockProject, TaskStatus.TODO, TaskPriority.HIGH));
         return new PageImpl<>(content, pageable, content.size());
     }
 

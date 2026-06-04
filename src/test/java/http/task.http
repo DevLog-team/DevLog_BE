@@ -33,3 +33,8 @@ Authorization: Bearer {{accessToken}}
 ### 작업 목록 조회 (페이지네이션: page, size, sort)
 GET http://localhost:8080/api/tasks?projectId=1&title=작업&assigneeId=0&status=ALL&priority=HIGH&page=0&size=5&sort=dueDate,ACS
 Authorization: Bearer {{accessToken}}
+
+
+### 작업 상세 조회
+GET http://localhost:8080/api/tasks/1
+Authorization: Bearer {{accessToken}}

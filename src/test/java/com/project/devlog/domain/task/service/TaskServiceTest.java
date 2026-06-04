@@ -92,7 +92,7 @@ class TaskServiceTest {
             CreateTaskRequest request = taskMock.createTaskRequestMock();
             User assignee = userMock.domainMock();
             Project project = projectMock.domainMock(ProjectStatus.ACTIVE);
-            Task task = taskMock.taskDomainMock(assignee, project, TaskStatus.TODO, TaskPriority.HIGH);
+            Task task = taskMock.DomainMock(assignee, project, TaskStatus.TODO, TaskPriority.HIGH);
             Tag tag = tagMock.domainMock();
 
             given(userRepository.findByIdAndIsDeletedFalse(request.assigneeId())).willReturn(Optional.of(assignee));
@@ -121,7 +121,7 @@ class TaskServiceTest {
             CreateTaskRequest request = taskMock.createTaskRequestWithoutTagsMock();
             User assignee = userMock.domainMock();
             Project project = projectMock.domainMock(ProjectStatus.ACTIVE);
-            Task task = taskMock.taskDomainMock(assignee, project, TaskStatus.TODO, TaskPriority.HIGH);
+            Task task = taskMock.DomainMock(assignee, project, TaskStatus.TODO, TaskPriority.HIGH);
 
             given(userRepository.findByIdAndIsDeletedFalse(request.assigneeId())).willReturn(Optional.of(assignee));
             given(projectRepository.findProjectByIdAndIsDeletedFalse(request.projectId())).willReturn(
@@ -166,8 +166,8 @@ class TaskServiceTest {
             User assignee = userMock.domainMock();
             Project project = projectMock.domainMock(ProjectStatus.ACTIVE);
 
-            Task todoTask = taskMock.taskDomainMock(assignee, project, TaskStatus.TODO, TaskPriority.HIGH);
-            Task inProgressTask = taskMock.taskDomainMock(assignee, project, TaskStatus.IN_PROGRESS, TaskPriority.HIGH);
+            Task todoTask = taskMock.DomainMock(assignee, project, TaskStatus.TODO, TaskPriority.HIGH);
+            Task inProgressTask = taskMock.DomainMock(assignee, project, TaskStatus.IN_PROGRESS, TaskPriority.HIGH);
 
             List<Task> tasks = List.of(todoTask, inProgressTask);
 

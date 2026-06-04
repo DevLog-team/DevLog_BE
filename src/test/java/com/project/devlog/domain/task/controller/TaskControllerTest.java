@@ -12,6 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.devlog.domain.project.entity.Project;
+import com.project.devlog.domain.project.entity.enums.ProjectStatus;
+import com.project.devlog.domain.project.mock.ProjectMock;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
@@ -21,6 +24,8 @@ import com.project.devlog.domain.task.entity.enums.TaskStatus;
 import com.project.devlog.domain.task.mapper.TaskMapper;
 import com.project.devlog.domain.task.mock.TaskMock;
 import com.project.devlog.domain.task.service.TaskService;
+import com.project.devlog.domain.user.entity.User;
+import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
@@ -55,6 +60,12 @@ class TaskControllerTest {
 
     @Autowired
     private TaskMock taskMock;
+
+    @Autowired
+    private UserMock userMock;
+
+    @Autowired
+    private ProjectMock projectMock;
 
     @Autowired
     private TaskService taskService;
@@ -261,7 +272,7 @@ class TaskControllerTest {
                                                             fieldWithPath("body.board.HOLD").type(JsonFieldType.ARRAY)
                                                                     .description("보류(HOLD) 작업 목록"),
 
-                                                            fieldWithPath("body.board.*[].id").type(JsonFieldType.NUMBER)
+                                                            fieldWithPath("body.board.*[].taskId").type(JsonFieldType.NUMBER)
                                                                     .description("작업 고유 ID"),
                                                             fieldWithPath("body.board.*[].title").type(JsonFieldType.STRING)
                                                                     .description("작업 제목"),
@@ -279,7 +290,7 @@ class TaskControllerTest {
                                                                     .optional().description("담당자 이름"),
                                                             fieldWithPath("body.board.*[].tags").type(JsonFieldType.ARRAY)
                                                                     .description("작업 태그 목록"),
-                                                            fieldWithPath("body.board.*[].tags[].id").type(JsonFieldType.NUMBER)
+                                                            fieldWithPath("body.board.*[].tags[].tagId").type(JsonFieldType.NUMBER)
                                                                     .description("태그 고유 ID"),
                                                             fieldWithPath("body.board.*[].tags[].name").type(
                                                                             JsonFieldType.STRING)
@@ -394,6 +405,82 @@ class TaskControllerTest {
                                                                     .description("첫 페이지 여부"),
                                                             fieldWithPath("body.pageInfo.isLast").type(JsonFieldType.BOOLEAN)
                                                                     .description("마지막 페이지 여부"),
+
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 상세 조회")
+    class Details {
+
+        @Test
+        @DisplayName("성공: 작업에 대한 정보 반환")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long taskId = 1L;
+
+            User user = userMock.domainMock();
+            Project project = projectMock.domainMock(ProjectStatus.ACTIVE);
+            Task task = taskMock.DomainWithTagsMock(user, project, TaskStatus.TODO, TaskPriority.HIGH);
+
+            given(taskService.getDetails(any())).willReturn(task);
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/{taskId}", taskId)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body").isNotEmpty())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 상세 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("작업 상세 조회 API")
+                                                    .pathParameters(
+                                                            parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
+                                                    .responseSchema(Schema.schema("TaskResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+
+                                                            fieldWithPath("body.taskId").type(JsonFieldType.NUMBER)
+                                                                    .description("작업 고유 ID"),
+                                                            fieldWithPath("body.title").type(JsonFieldType.STRING)
+                                                                    .description("작업 제목"),
+                                                            fieldWithPath("body.description").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .optional().description("작업 상세 설명"),
+                                                            fieldWithPath("body.status").type(JsonFieldType.STRING)
+                                                                    .description("작업 현재 상태"),
+                                                            fieldWithPath("body.priority").type(JsonFieldType.STRING)
+                                                                    .description("우선순위 (HIGH, MEDIUM, LOW)"),
+                                                            fieldWithPath("body.dueDate").type(JsonFieldType.STRING)
+                                                                    .description("마감일 (YYYY-MM-DD)"),
+                                                            fieldWithPath("body.assigneeName").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .optional().description("담당자 이름"),
+                                                            fieldWithPath("body.tags").type(JsonFieldType.ARRAY)
+                                                                    .description("작업 태그 목록"),
+                                                            fieldWithPath("body.tags[].tagId").type(JsonFieldType.NUMBER)
+                                                                    .description("태그 고유 ID"),
+                                                            fieldWithPath("body.tags[].name").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .description("태그 이름"),
+                                                            fieldWithPath("body.tags[].color").type(
+                                                                            JsonFieldType.STRING)
+                                                                    .description("태그 색상 헥사 코드"),
 
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 발행 일시")

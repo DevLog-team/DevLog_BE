@@ -41,7 +41,7 @@ paths:
               examples:
                 로그인 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1,\"email\"\
-                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-06-04T18:01:57.7766518\"\
+                    :\"test@naver.com\",\"name\":\"test\"},\"timestamp\":\"2026-06-04T18:51:43.6893453\"\
                     }"
   /api/logout:
     post:
@@ -59,7 +59,7 @@ paths:
                 $ref: "#/components/schemas/api-logout229656191"
               examples:
                 로그아웃 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:01:58.0324529\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:51:43.9516012\"\
                     }"
   /api/project:
     post:
@@ -88,7 +88,7 @@ paths:
               examples:
                 프로젝트 생성 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-06-04T18:01:59.5180644\"}"
+                    :\"2026-06-04T18:51:45.3734756\"}"
   /api/projects:
     get:
       tags:
@@ -142,7 +142,7 @@ paths:
                     OWNER\",\"totalTaskCount\":10,\"completedTaskCount\":6,\"inProgressTaskCount\"\
                     :4,\"progressRate\":0.6}],\"pageInfo\":{\"currentPage\":1,\"pageSize\"\
                     :10,\"totalElements\":1,\"totalPages\":1,\"isFirst\":true,\"isLast\"\
-                    :true}},\"timestamp\":\"2026-06-04T18:01:59.4675246\"}"
+                    :true}},\"timestamp\":\"2026-06-04T18:51:45.324874\"}"
   /api/reissue:
     post:
       tags:
@@ -168,7 +168,7 @@ paths:
                 $ref: "#/components/schemas/api-logout229656191"
               examples:
                 토큰 재발급 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:01:56.7980667\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:51:42.703963\"\
                     }"
         "401":
           description: "401"
@@ -179,7 +179,7 @@ paths:
               examples:
                 토큰 재발급 실패 - 리프레시 토큰이 만료 되었을 경우:
                   value: "{\"status\":\"ERROR\",\"body\":{\"status\":\"UNAUTHORIZED\"\
-                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-06-04T18:01:57.4750801\"\
+                    ,\"message\":\"Refresh Token이 만료되었습니다.\"},\"timestamp\":\"2026-06-04T18:51:43.3826443\"\
                     }"
   /api/signup:
     post:
@@ -212,7 +212,7 @@ paths:
               examples:
                 user/signup:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"userId\":1},\"timestamp\"\
-                    :\"2026-06-04T18:03:11.2941067\"}"
+                    :\"2026-06-04T18:53:04.6454041\"}"
   /api/tag:
     post:
       tags:
@@ -238,7 +238,7 @@ paths:
               examples:
                 태그 생성 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tagId\":1},\"timestamp\"\
-                    :\"2026-06-04T18:02:39.4054031\"}"
+                    :\"2026-06-04T18:52:26.7554741\"}"
   /api/tags:
     get:
       tags:
@@ -256,7 +256,7 @@ paths:
               examples:
                 태그 목록 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tags\":[{\"tagId\":1,\"\
-                    name\":\"백엔드\",\"color\":\"blue\"}]},\"timestamp\":\"2026-06-04T18:02:39.3190832\"\
+                    name\":\"백엔드\",\"color\":\"blue\"}]},\"timestamp\":\"2026-06-04T18:52:26.6904571\"\
                     }"
   /api/task:
     post:
@@ -286,7 +286,7 @@ paths:
               examples:
                 작업 생성 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"taskId\":1},\"timestamp\"\
-                    :\"2026-06-04T18:02:40.1068119\"}"
+                    :\"2026-06-04T18:52:27.5049867\"}"
   /api/tasks:
     get:
       tags:
@@ -357,7 +357,7 @@ paths:
                     :\"TODO\",\"priority\":\"HIGH\",\"dueDate\":\"2026-06-11\"}],\"\
                     pageInfo\":{\"currentPage\":1,\"pageSize\":10,\"totalElements\"\
                     :1,\"totalPages\":1,\"isFirst\":true,\"isLast\":true}},\"timestamp\"\
-                    :\"2026-06-04T18:02:39.9377095\"}"
+                    :\"2026-06-04T18:52:27.3571477\"}"
   /api/projects/{projectId}:
     get:
       tags:
@@ -386,7 +386,7 @@ paths:
                     :\"ACTIVE\",\"startDate\":\"2026-06-04\",\"endDate\":\"2026-09-04\"\
                     ,\"role\":\"OWNER\",\"memberCount\":2,\"totalTaskCount\":10,\"\
                     completedTaskCount\":6,\"inProgressTaskCount\":4,\"delayedTaskCount\"\
-                    :2},\"timestamp\":\"2026-06-04T18:01:59.4135764\"}"
+                    :2},\"timestamp\":\"2026-06-04T18:51:45.2732631\"}"
     put:
       tags:
       - Project
@@ -420,7 +420,7 @@ paths:
               examples:
                 프로젝트 수정 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"projectId\":1},\"timestamp\"\
-                    :\"2026-06-04T18:01:59.3726593\"}"
+                    :\"2026-06-04T18:51:45.231105\"}"
     delete:
       tags:
       - Project
@@ -440,10 +440,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-tags-tagId486549215"
+                $ref: "#/components/schemas/api-projects-projectId486549215"
               examples:
                 프로젝트 삭제 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:01:59.3302692\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:51:45.1878888\"\
                     }"
   /api/tags/{tagId}:
     get:
@@ -469,7 +469,7 @@ paths:
               examples:
                 태그 단건 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tagId\":1,\"name\":\"\
-                    백엔드\",\"color\":\"blue\"},\"timestamp\":\"2026-06-04T18:02:39.3615873\"\
+                    백엔드\",\"color\":\"blue\"},\"timestamp\":\"2026-06-04T18:52:26.7237583\"\
                     }"
     put:
       tags:
@@ -502,7 +502,7 @@ paths:
               examples:
                 태그 수정 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"tagId\":1},\"timestamp\"\
-                    :\"2026-06-04T18:02:39.281147\"}"
+                    :\"2026-06-04T18:52:26.6422226\"}"
     delete:
       tags:
       - Tag
@@ -522,10 +522,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-tags-tagId486549215"
+                $ref: "#/components/schemas/api-projects-projectId486549215"
               examples:
                 태그 삭제 성공:
-                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:02:39.2417182\"\
+                  value: "{\"status\":\"SUCCESS\",\"body\":null,\"timestamp\":\"2026-06-04T18:52:26.5961912\"\
                     }"
   /api/tasks/kanban:
     get:
@@ -551,11 +551,11 @@ paths:
               examples:
                 칸반보드 작업 목록 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"board\":{\"TODO\":[{\"\
-                    id\":1,\"title\":\"인증 기능 구현\",\"description\":\"스프링 시큐리티 + JWT\
-                    \ 기반 로그인 API 개발\",\"status\":\"TODO\",\"priority\":\"HIGH\",\"\
-                    dueDate\":\"2026-06-11\",\"assigneeName\":\"데브로그팀원\",\"tags\"\
-                    :[{\"id\":10,\"name\":\"Frontend\",\"color\":\"#3357FF\"}]}],\"\
-                    IN_PROGRESS\":[],\"DONE\":[],\"HOLD\":[]}},\"timestamp\":\"2026-06-04T18:02:39.9868301\"\
+                    taskId\":1,\"title\":\"인증 기능 구현\",\"description\":\"스프링 시큐리티 +\
+                    \ JWT 기반 로그인 API 개발\",\"status\":\"TODO\",\"priority\":\"HIGH\"\
+                    ,\"dueDate\":\"2026-06-11\",\"assigneeName\":\"데브로그팀원\",\"tags\"\
+                    :[{\"tagId\":10,\"name\":\"Frontend\",\"color\":\"#3357FF\"}]}],\"\
+                    IN_PROGRESS\":[],\"DONE\":[],\"HOLD\":[]}},\"timestamp\":\"2026-06-04T18:52:27.3980275\"\
                     }"
   /api/tasks/priority:
     get:
@@ -574,7 +574,7 @@ paths:
               examples:
                 작업 우선순위 목록 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"taskPriorities\":[\"\
-                    LOW\",\"MEDIUM\",\"HIGH\",\"URGENT\"]},\"timestamp\":\"2026-06-04T18:02:40.0296123\"\
+                    LOW\",\"MEDIUM\",\"HIGH\",\"URGENT\"]},\"timestamp\":\"2026-06-04T18:52:27.4338913\"\
                     }"
   /api/tasks/status:
     get:
@@ -593,7 +593,36 @@ paths:
               examples:
                 작업 상태 목록 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"taskStatusList\":[\"\
-                    TODO\",\"IN_PROGRESS\",\"DONE\",\"HOLD\"]},\"timestamp\":\"2026-06-04T18:02:40.0632693\"\
+                    TODO\",\"IN_PROGRESS\",\"DONE\",\"HOLD\"]},\"timestamp\":\"2026-06-04T18:52:27.464746\"\
+                    }"
+  /api/tasks/{taskId}:
+    get:
+      tags:
+      - Task
+      summary: 작업 상세 조회 API
+      description: 작업 상세 조회 API
+      operationId: 작업 상세 조회 성공
+      parameters:
+      - name: taskId
+        in: path
+        description: 조회할 작업 고유 식별 ID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskResponse"
+              examples:
+                작업 상세 조회 성공:
+                  value: "{\"status\":\"SUCCESS\",\"body\":{\"taskId\":1,\"title\"\
+                    :\"인증 기능 구현\",\"description\":\"스프링 시큐리티 + JWT 기반 로그인 API 개발\"\
+                    ,\"status\":\"TODO\",\"priority\":\"HIGH\",\"dueDate\":\"2026-06-11\"\
+                    ,\"assigneeName\":\"test\",\"tags\":[{\"tagId\":10,\"name\":\"\
+                    Backend\",\"color\":\"#FF5733\"}]},\"timestamp\":\"2026-06-04T18:52:27.3172911\"\
                     }"
   /api/projects/{projectId}/invite:
     post:
@@ -630,7 +659,7 @@ paths:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"successEmails\":[\"\
                     success@test.com\"],\"failedEmails\":[\"notfound@test.com (존재하\
                     지 않는 회원)\",\"already@test.com (이미 참여 중인 팀원)\"]},\"timestamp\"\
-                    :\"2026-06-04T18:01:59.2923787\"}"
+                    :\"2026-06-04T18:51:45.1528944\"}"
   /api/projects/{projectId}/members:
     get:
       tags:
@@ -655,7 +684,7 @@ paths:
               examples:
                 프로젝트 팀원 목록 조회 성공:
                   value: "{\"status\":\"SUCCESS\",\"body\":{\"members\":[{\"userId\"\
-                    :1,\"name\":\"test\"}]},\"timestamp\":\"2026-06-04T18:01:59.1469224\"\
+                    :1,\"name\":\"test\"}]},\"timestamp\":\"2026-06-04T18:51:44.9978265\"\
                     }"
 components:
   schemas:
@@ -726,8 +755,8 @@ components:
         status:
           type: string
           description: 응답 상태
-    TaskStatusListResponse:
-      title: TaskStatusListResponse
+    TaskResponse:
+      title: TaskResponse
       required:
       - status
       - timestamp
@@ -735,18 +764,56 @@ components:
       properties:
         body:
           required:
-          - taskStatusList
+          - dueDate
+          - priority
+          - status
+          - tags
+          - taskId
+          - title
           type: object
           properties:
-            taskStatusList:
+            assigneeName:
+              type: string
+              description: 담당자 이름
+              nullable: true
+            dueDate:
+              type: string
+              description: 마감일 (YYYY-MM-DD)
+            description:
+              type: string
+              description: 작업 상세 설명
+              nullable: true
+            priority:
+              type: string
+              description: "우선순위 (HIGH, MEDIUM, LOW)"
+            title:
+              type: string
+              description: 작업 제목
+            taskId:
+              type: number
+              description: 작업 고유 ID
+            tags:
               type: array
-              description: 작업 상태 목록
+              description: 작업 태그 목록
               items:
-                oneOf:
-                - type: object
-                - type: boolean
-                - type: string
-                - type: number
+                required:
+                - color
+                - name
+                - tagId
+                type: object
+                properties:
+                  color:
+                    type: string
+                    description: 태그 색상 헥사 코드
+                  tagId:
+                    type: number
+                    description: 태그 고유 ID
+                  name:
+                    type: string
+                    description: 태그 이름
+            status:
+              type: string
+              description: 작업 현재 상태
         timestamp:
           type: string
           description: 응답 발행 일시
@@ -774,6 +841,150 @@ components:
         status:
           type: string
           description: 응답 상태
+    TaskStatusListResponse:
+      title: TaskStatusListResponse
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - taskStatusList
+          type: object
+          properties:
+            taskStatusList:
+              type: array
+              description: 작업 상태 목록
+              items:
+                oneOf:
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
+        timestamp:
+          type: string
+          description: 응답 발행 일시
+        status:
+          type: string
+          description: 응답 상태 코드/메시지
+    KanbanBoardResponse:
+      title: KanbanBoardResponse
+      required:
+      - status
+      - timestamp
+      type: object
+      properties:
+        body:
+          required:
+          - board
+          type: object
+          properties:
+            board:
+              required:
+              - DONE
+              - HOLD
+              - IN_PROGRESS
+              - TODO
+              type: object
+              properties:
+                IN_PROGRESS:
+                  type: array
+                  description: 진행 중(IN_PROGRESS) 작업 목록
+                  items:
+                    oneOf:
+                    - type: object
+                    - type: boolean
+                    - type: string
+                    - type: number
+                TODO:
+                  type: array
+                  description: 할 일(TODO) 작업 목록
+                  items:
+                    oneOf:
+                    - type: object
+                    - type: boolean
+                    - type: string
+                    - type: number
+                DONE:
+                  type: array
+                  description: 완료(DONE) 작업 목록
+                  items:
+                    oneOf:
+                    - type: object
+                    - type: boolean
+                    - type: string
+                    - type: number
+                '*':
+                  type: array
+                  items:
+                    required:
+                    - dueDate
+                    - priority
+                    - status
+                    - tags
+                    - taskId
+                    - title
+                    type: object
+                    properties:
+                      assigneeName:
+                        type: string
+                        description: 담당자 이름
+                        nullable: true
+                      dueDate:
+                        type: string
+                        description: 마감일 (YYYY-MM-DD)
+                      description:
+                        type: string
+                        description: 작업 상세 설명
+                        nullable: true
+                      priority:
+                        type: string
+                        description: "우선순위 (HIGH, MEDIUM, LOW)"
+                      title:
+                        type: string
+                        description: 작업 제목
+                      taskId:
+                        type: number
+                        description: 작업 고유 ID
+                      tags:
+                        type: array
+                        description: 작업 태그 목록
+                        items:
+                          required:
+                          - color
+                          - name
+                          - tagId
+                          type: object
+                          properties:
+                            color:
+                              type: string
+                              description: 태그 색상 헥사 코드
+                            tagId:
+                              type: number
+                              description: 태그 고유 ID
+                            name:
+                              type: string
+                              description: 태그 이름
+                      status:
+                        type: string
+                        description: 작업 현재 상태
+                HOLD:
+                  type: array
+                  description: 보류(HOLD) 작업 목록
+                  items:
+                    oneOf:
+                    - type: object
+                    - type: boolean
+                    - type: string
+                    - type: number
+              description: 상태별 칸반보드 데이터 Map
+        timestamp:
+          type: string
+          description: 응답 발행 일시
+        status:
+          type: string
+          description: 응답 상태 코드/메시지
     CreateTagRequest:
       title: CreateTagRequest
       required:
@@ -877,123 +1088,6 @@ components:
         status:
           type: string
           description: 응답 상태
-    KanbanBoardResponse:
-      title: KanbanBoardResponse
-      required:
-      - status
-      - timestamp
-      type: object
-      properties:
-        body:
-          required:
-          - board
-          type: object
-          properties:
-            board:
-              required:
-              - DONE
-              - HOLD
-              - IN_PROGRESS
-              - TODO
-              type: object
-              properties:
-                IN_PROGRESS:
-                  type: array
-                  description: 진행 중(IN_PROGRESS) 작업 목록
-                  items:
-                    oneOf:
-                    - type: object
-                    - type: boolean
-                    - type: string
-                    - type: number
-                TODO:
-                  type: array
-                  description: 할 일(TODO) 작업 목록
-                  items:
-                    oneOf:
-                    - type: object
-                    - type: boolean
-                    - type: string
-                    - type: number
-                DONE:
-                  type: array
-                  description: 완료(DONE) 작업 목록
-                  items:
-                    oneOf:
-                    - type: object
-                    - type: boolean
-                    - type: string
-                    - type: number
-                '*':
-                  type: array
-                  items:
-                    required:
-                    - dueDate
-                    - id
-                    - priority
-                    - status
-                    - tags
-                    - title
-                    type: object
-                    properties:
-                      assigneeName:
-                        type: string
-                        description: 담당자 이름
-                        nullable: true
-                      dueDate:
-                        type: string
-                        description: 마감일 (YYYY-MM-DD)
-                      description:
-                        type: string
-                        description: 작업 상세 설명
-                        nullable: true
-                      id:
-                        type: number
-                        description: 작업 고유 ID
-                      priority:
-                        type: string
-                        description: "우선순위 (HIGH, MEDIUM, LOW)"
-                      title:
-                        type: string
-                        description: 작업 제목
-                      tags:
-                        type: array
-                        description: 작업 태그 목록
-                        items:
-                          required:
-                          - color
-                          - id
-                          - name
-                          type: object
-                          properties:
-                            color:
-                              type: string
-                              description: 태그 색상 헥사 코드
-                            name:
-                              type: string
-                              description: 태그 이름
-                            id:
-                              type: number
-                              description: 태그 고유 ID
-                      status:
-                        type: string
-                        description: 작업 현재 상태
-                HOLD:
-                  type: array
-                  description: 보류(HOLD) 작업 목록
-                  items:
-                    oneOf:
-                    - type: object
-                    - type: boolean
-                    - type: string
-                    - type: number
-              description: 상태별 칸반보드 데이터 Map
-        timestamp:
-          type: string
-          description: 응답 발행 일시
-        status:
-          type: string
-          description: 응답 상태 코드/메시지
     LoginRequest:
       title: LoginRequest
       required:
@@ -1120,7 +1214,7 @@ components:
         status:
           type: string
           description: 응답 상태
-    api-tags-tagId486549215:
+    api-projects-projectId486549215:
       type: object
     InviteMembersResponse:
       title: InviteMembersResponse
