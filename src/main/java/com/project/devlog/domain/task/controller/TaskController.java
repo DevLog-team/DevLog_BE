@@ -1,8 +1,9 @@
 package com.project.devlog.domain.task.controller;
 
+import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
+import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
-import com.project.devlog.domain.task.dto.request.UpdateStatusRequest;
 import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
@@ -112,12 +113,23 @@ public class TaskController {
 
     @PatchMapping("/api/tasks/{taskId}/status")
     @PreAuthorize("@taskSecurity.isTaskAccessAllowed(#taskId, #userId)")
-    public ResponseEntity<TaskIdResponse> updateStatus(
+    public ResponseEntity<TaskIdResponse> changeStatus(
             @CurrentUser Long userId,
             @PathVariable Long taskId,
-            @Valid @RequestBody UpdateStatusRequest request
+            @Valid @RequestBody ChangeStatusRequest request
     ) {
-        taskService.updateStatus(taskId, request);
+        taskService.changeStatus(taskId, request);
+        return ResponseEntity.ok().body(taskMapper.toIdDto(taskId));
+    }
+
+    @PatchMapping("/api/tasks/{taskId}/priority")
+    @PreAuthorize("@taskSecurity.isTaskAccessAllowed(#taskId, #userId)")
+    public ResponseEntity<TaskIdResponse> changePriority(
+            @CurrentUser Long userId,
+            @PathVariable Long taskId,
+            @Valid @RequestBody ChangePriorityRequest request
+    ) {
+        taskService.changePriority(taskId, request);
         return ResponseEntity.ok().body(taskMapper.toIdDto(taskId));
     }
 }

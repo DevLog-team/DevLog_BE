@@ -85,12 +85,16 @@ public class Task extends BaseDateTime {
         this.description = newDescription;
     }
 
-    public void updateStatus(TaskStatus newStatus) {
+    public void changeStatus(TaskStatus newStatus) {
         this.status = newStatus;
         if (newStatus == TaskStatus.DONE) {
             this.completedAt = LocalDateTime.now();
         } else {
             this.completedAt = null;
         }
+    }
+
+    public void changePriority(TaskPriority newPriority) {
+        this.priority = newPriority;
     }
 }

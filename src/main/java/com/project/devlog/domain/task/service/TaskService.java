@@ -4,9 +4,10 @@ import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.repository.ProjectRepository;
 import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.tag.repository.TagRepository;
+import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
+import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
-import com.project.devlog.domain.task.dto.request.UpdateStatusRequest;
 import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TaskResponse;
@@ -141,8 +142,14 @@ public class TaskService {
     }
 
     @Transactional
-    public void updateStatus(Long taskId, UpdateStatusRequest request) {
+    public void changeStatus(Long taskId, ChangeStatusRequest request) {
         Task task = findTaskById(taskId);
-        task.updateStatus(request.status());
+        task.changeStatus(request.status());
+    }
+
+    @Transactional
+    public void changePriority(Long taskId, ChangePriorityRequest request) {
+        Task task = findTaskById(taskId);
+        task.changePriority(request.priority());
     }
 }
