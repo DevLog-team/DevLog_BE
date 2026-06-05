@@ -50,12 +50,21 @@ Authorization: Bearer {{accessToken}}
 }
 
 
-
-### 작업 상태 수정
+### 작업 상태 변경
 PATCH http://localhost:8080/api/tasks/1/status
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
   "status": "TODO"
+}
+
+
+### 작업 우선순위 변경
+PATCH http://localhost:8080/api/tasks/1/priority
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "priority": "MEDIUM"
 }

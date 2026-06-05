@@ -16,9 +16,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.mock.ProjectMock;
+import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
+import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
-import com.project.devlog.domain.task.dto.request.UpdateStatusRequest;
 import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.entity.Task;
@@ -569,10 +570,9 @@ class TaskControllerTest {
         }
     }
 
-
     @Nested
     @DisplayName("작업 상태 수정")
-    class UpdateStatus {
+    class ChangeStatus {
 
         @Test
         @DisplayName("성공: 상태값이 변경된다")
@@ -580,7 +580,7 @@ class TaskControllerTest {
         void success() throws Exception {
             // given
             Long taskId = 1L;
-            UpdateStatusRequest requestDto = taskMock.updateStatusRequest();
+            ChangeStatusRequest requestDto = taskMock.changeStatusRequest();
             String content = objectMapper.writeValueAsString(requestDto);
 
             given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
@@ -604,10 +604,65 @@ class TaskControllerTest {
                                                     .description("작업 상태 수정 API")
                                                     .pathParameters(
                                                             parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
-                                                    .requestSchema(Schema.schema("UpdateTaskRequest"))
+                                                    .requestSchema(Schema.schema("ChangeStatusRequest"))
                                                     .requestFields(
                                                             fieldWithPath("status").type(JsonFieldType.STRING)
-                                                                    .description("수정도니 상태값")
+                                                                    .description("수정된 상태값")
+                                                    )
+                                                    .responseSchema(Schema.schema("TaskIdResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+                                                            fieldWithPath("body.taskId").type(JsonFieldType.NUMBER)
+                                                                    .description("작업 고유 ID"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 우선순위 수정")
+    class ChangePriority {
+
+        @Test
+        @DisplayName("성공: 우선순위 값이 변경된다")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long taskId = 1L;
+            ChangePriorityRequest requestDto = taskMock.changePriorityRequest();
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}/priority", taskId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(content));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.taskId").isNumber())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 우선순위 수정 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("작업 우선순위 수정 API")
+                                                    .pathParameters(
+                                                            parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
+                                                    .requestSchema(Schema.schema("ChangePriorityRequest"))
+                                                    .requestFields(
+                                                            fieldWithPath("priority").type(JsonFieldType.STRING)
+                                                                    .description("수정된 우선순위 값")
                                                     )
                                                     .responseSchema(Schema.schema("TaskIdResponse"))
                                                     .responseFields(

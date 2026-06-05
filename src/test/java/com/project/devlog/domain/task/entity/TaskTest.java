@@ -64,7 +64,7 @@ class TaskTest {
                     .build();
 
             // when
-            task.updateStatus(TaskStatus.IN_PROGRESS);
+            task.changeStatus(TaskStatus.IN_PROGRESS);
 
             // then
             assertThat(task.getStatus()).isEqualTo(TaskStatus.IN_PROGRESS);
@@ -83,7 +83,7 @@ class TaskTest {
             LocalDateTime testStartTime = LocalDateTime.now();
 
             // when
-            task.updateStatus(TaskStatus.DONE);
+            task.changeStatus(TaskStatus.DONE);
 
             // then
             assertThat(task.getStatus()).isEqualTo(TaskStatus.DONE);
@@ -100,15 +100,47 @@ class TaskTest {
                     .build();
 
 
-            task.updateStatus(TaskStatus.DONE);
+            task.changeStatus(TaskStatus.DONE);
             assertThat(task.getCompletedAt()).isNotNull();
 
             // when
-            task.updateStatus(TaskStatus.TODO);
+            task.changeStatus(TaskStatus.TODO);
 
             // then
             assertThat(task.getStatus()).isEqualTo(TaskStatus.TODO);
             assertThat(task.getCompletedAt()).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 우선순위 수정 테스트")
+    class UpdatePriority {
+
+        @Test
+        @DisplayName("성공: 우선순위 값을 변경한다")
+        void success_updatePriority() {
+            // given
+            User mockAssignee = Mockito.mock(User.class);
+            Project mockProject = Mockito.mock(Project.class);
+
+            Task task = Task.builder()
+                    .id(1L)
+                    .title("기존 제목")
+                    .description("기존 설명")
+                    .status(TaskStatus.TODO)
+                    .priority(TaskPriority.HIGH)
+                    .dueDate(LocalDate.now().plusDays(7))
+                    .assignee(mockAssignee)
+                    .project(mockProject)
+                    .build();
+
+            TaskPriority newPriority = TaskPriority.MEDIUM;
+
+            // when
+            task.changePriority(newPriority);
+
+            // then
+            assertThat(task.getPriority()).isEqualTo(newPriority);
         }
     }
 }

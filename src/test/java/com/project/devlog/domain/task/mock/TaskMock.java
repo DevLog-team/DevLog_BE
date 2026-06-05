@@ -1,12 +1,12 @@
 package com.project.devlog.domain.task.mock;
 
 import com.project.devlog.domain.project.entity.Project;
+import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
+import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
-import com.project.devlog.domain.task.dto.request.UpdateStatusRequest;
 import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TagResponse;
-import com.project.devlog.domain.task.dto.response.TaskListResponse;
 import com.project.devlog.domain.task.dto.response.TaskResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
@@ -145,7 +145,12 @@ public class TaskMock {
         );
     }
 
-    public UpdateStatusRequest updateStatusRequest() {
-        return new UpdateStatusRequest(TaskStatus.IN_PROGRESS);
+    public ChangeStatusRequest changeStatusRequest() {
+        return new ChangeStatusRequest(TaskStatus.IN_PROGRESS);
     }
+
+    public ChangePriorityRequest changePriorityRequest() {
+        return new ChangePriorityRequest(TaskPriority.MEDIUM);
+    }
+
 }
