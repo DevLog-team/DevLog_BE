@@ -18,6 +18,7 @@ import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.mock.ProjectMock;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
+import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.entity.Task;
 import com.project.devlog.domain.task.entity.enums.TaskPriority;
@@ -452,7 +453,6 @@ class TaskControllerTest {
 
             // when
             ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/{taskId}", taskId)
-                    .param("projectId", String.valueOf(projectId))
                     .accept(MediaType.APPLICATION_JSON));
 
             // then
@@ -466,8 +466,6 @@ class TaskControllerTest {
                                             ResourceSnippetParameters.builder()
                                                     .tag("Task")
                                                     .description("작업 상세 조회 API")
-                                                    .queryParameters(
-                                                            parameterWithName("projectId").description("조회할 프로젝트 고유 식별 ID"))
                                                     .pathParameters(
                                                             parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
                                                     .responseSchema(Schema.schema("TaskResponse"))
@@ -502,6 +500,64 @@ class TaskControllerTest {
                                                                             JsonFieldType.STRING)
                                                                     .description("태그 색상 헥사 코드"),
 
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("작업 기본정보 수정")
+    class UpdateBasic {
+
+        @Test
+        @DisplayName("성공: 새로운 제목과 설명이 주어지면 작업 정보가 변경된다")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long taskId = 1L;
+            UpdateTaskRequest requestDto = taskMock.updateTaskRequest();
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}", taskId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(content));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.taskId").isNumber())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 기본정보 수정 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("작업 기본정보 수정 API")
+                                                    .pathParameters(
+                                                            parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
+                                                    .requestSchema(Schema.schema("UpdateTaskRequest"))
+                                                    .requestFields(
+                                                            fieldWithPath("title").type(JsonFieldType.STRING)
+                                                                    .description("수정된 제목"),
+                                                            fieldWithPath("description").type(JsonFieldType.STRING)
+                                                                    .optional()
+                                                                    .description("수정된 설명")
+                                                    )
+                                                    .responseSchema(Schema.schema("TaskIdResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+                                                            fieldWithPath("body.taskId").type(JsonFieldType.NUMBER)
+                                                                    .description("작업 고유 ID"),
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 발행 일시")
                                                     )

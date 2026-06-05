@@ -1,0 +1,51 @@
+package com.project.devlog.domain.task.entity;
+
+import com.project.devlog.domain.project.entity.Project;
+import com.project.devlog.domain.task.entity.enums.TaskPriority;
+import com.project.devlog.domain.task.entity.enums.TaskStatus;
+import com.project.devlog.domain.user.entity.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class TaskTest {
+
+    @Nested
+    @DisplayName("작업 기본정보 수정 테스트")
+    class UpdateBasicInfo {
+
+        @Test
+        @DisplayName("성공: 새로운 제목과 설명이 주어지면 작업 정보가 변경된다")
+        void success_updateTitleAndDescription() {
+            // given
+            User mockAssignee = Mockito.mock(User.class);
+            Project mockProject = Mockito.mock(Project.class);
+
+            Task task = Task.builder()
+                    .id(1L)
+                    .title("기존 제목")
+                    .description("기존 설명")
+                    .status(TaskStatus.TODO)
+                    .priority(TaskPriority.HIGH)
+                    .dueDate(LocalDate.now().plusDays(7))
+                    .assignee(mockAssignee)
+                    .project(mockProject)
+                    .build();
+
+            String newTitle = "수정된 새로운 제목";
+            String newDescription = "수정된 새로운 설명";
+
+            // when
+            task.update(newTitle, newDescription);
+
+            // then
+            assertThat(task.getTitle()).isEqualTo(newTitle);
+            assertThat(task.getDescription()).isEqualTo(newDescription);
+        }
+    }
+}
