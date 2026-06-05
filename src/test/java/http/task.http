@@ -68,3 +68,13 @@ Authorization: Bearer {{accessToken}}
 {
   "priority": "MEDIUM"
 }
+
+
+### 작업 담당자 변경
+PATCH http://localhost:8080/api/tasks/1/assignee
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": "41"
+}

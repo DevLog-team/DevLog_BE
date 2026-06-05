@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.mock.ProjectMock;
+import com.project.devlog.domain.task.dto.request.ChangeAssigneeRequest;
 import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
 import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
@@ -97,13 +98,14 @@ class TaskControllerTest {
 
             given(taskSecurityEvaluator.isProjectMember(anyLong(), anyLong())).willReturn(true);
 
-            given(taskService.create(anyLong(),any(CreateTaskRequest.class))).willReturn(taskId);
+            given(taskService.create(anyLong(), any(CreateTaskRequest.class))).willReturn(taskId);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/projects/{projectId}/tasks", projectId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(content));
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.post("/api/projects/{projectId}/tasks", projectId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
 
             // then
             perform
@@ -252,8 +254,9 @@ class TaskControllerTest {
             given(taskService.getKanbanBoard(any())).willReturn(kanbanBoardResponse);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/projects/{projectId}/tasks/kanban", projectId)
-                    .accept(MediaType.APPLICATION_JSON));
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get("/api/projects/{projectId}/tasks/kanban", projectId)
+                            .accept(MediaType.APPLICATION_JSON));
 
             // then
             perform
@@ -304,7 +307,8 @@ class TaskControllerTest {
                                                                     .optional().description("담당자 이름"),
                                                             fieldWithPath("body.board.*[].tags").type(JsonFieldType.ARRAY)
                                                                     .description("작업 태그 목록"),
-                                                            fieldWithPath("body.board.*[].tags[].tagId").type(JsonFieldType.NUMBER)
+                                                            fieldWithPath("body.board.*[].tags[].tagId").type(
+                                                                            JsonFieldType.NUMBER)
                                                                     .description("태그 고유 ID"),
                                                             fieldWithPath("body.board.*[].tags[].name").type(
                                                                             JsonFieldType.STRING)
@@ -344,15 +348,16 @@ class TaskControllerTest {
                     .willReturn(mockTaskPage);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/projects/{projectId}/tasks", projectId)
-                    .param("title", "API")
-                    .param("assigneeId", "1")
-                    .param("status", "TODO")
-                    .param("priority", "HIGH")
-                    .param("page", "0")
-                    .param("size", "10")
-                    .param("sort", "dueDate,asc")
-                    .accept(MediaType.APPLICATION_JSON));
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get("/api/projects/{projectId}/tasks", projectId)
+                            .param("title", "API")
+                            .param("assigneeId", "1")
+                            .param("status", "TODO")
+                            .param("priority", "HIGH")
+                            .param("page", "0")
+                            .param("size", "10")
+                            .param("sort", "dueDate,asc")
+                            .accept(MediaType.APPLICATION_JSON));
 
             // then
             perform
@@ -528,10 +533,11 @@ class TaskControllerTest {
             given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}", taskId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(content));
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}", taskId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
 
             // then
             perform
@@ -571,7 +577,7 @@ class TaskControllerTest {
     }
 
     @Nested
-    @DisplayName("작업 상태 수정")
+    @DisplayName("작업 상태 변경")
     class ChangeStatus {
 
         @Test
@@ -586,10 +592,11 @@ class TaskControllerTest {
             given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}/status", taskId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(content));
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}/status", taskId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
 
             // then
             perform
@@ -597,17 +604,17 @@ class TaskControllerTest {
                     .andExpect(jsonPath("$.status").isString())
                     .andExpect(jsonPath("$.body.taskId").isNumber())
                     .andExpect(jsonPath("$.timestamp").isString())
-                    .andDo(document("작업 상태 수정 성공",
+                    .andDo(document("작업 상태 변경 성공",
                                     resource(
                                             ResourceSnippetParameters.builder()
                                                     .tag("Task")
-                                                    .description("작업 상태 수정 API")
+                                                    .description("작업 상태 변경 API")
                                                     .pathParameters(
                                                             parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
                                                     .requestSchema(Schema.schema("ChangeStatusRequest"))
                                                     .requestFields(
                                                             fieldWithPath("status").type(JsonFieldType.STRING)
-                                                                    .description("수정된 상태값")
+                                                                    .description("변경된 상태값")
                                                     )
                                                     .responseSchema(Schema.schema("TaskIdResponse"))
                                                     .responseFields(
@@ -626,7 +633,7 @@ class TaskControllerTest {
     }
 
     @Nested
-    @DisplayName("작업 우선순위 수정")
+    @DisplayName("작업 우선순위 변경")
     class ChangePriority {
 
         @Test
@@ -641,10 +648,11 @@ class TaskControllerTest {
             given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}/priority", taskId)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(content));
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}/priority", taskId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
 
             // then
             perform
@@ -652,17 +660,74 @@ class TaskControllerTest {
                     .andExpect(jsonPath("$.status").isString())
                     .andExpect(jsonPath("$.body.taskId").isNumber())
                     .andExpect(jsonPath("$.timestamp").isString())
-                    .andDo(document("작업 우선순위 수정 성공",
+                    .andDo(document("작업 우선순위 변경 성공",
                                     resource(
                                             ResourceSnippetParameters.builder()
                                                     .tag("Task")
-                                                    .description("작업 우선순위 수정 API")
+                                                    .description("작업 우선순위 변경 API")
                                                     .pathParameters(
                                                             parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
                                                     .requestSchema(Schema.schema("ChangePriorityRequest"))
                                                     .requestFields(
                                                             fieldWithPath("priority").type(JsonFieldType.STRING)
-                                                                    .description("수정된 우선순위 값")
+                                                                    .description("변경된 우선순위 값")
+                                                    )
+                                                    .responseSchema(Schema.schema("TaskIdResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+                                                            fieldWithPath("body.taskId").type(JsonFieldType.NUMBER)
+                                                                    .description("작업 고유 ID"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+
+    @Nested
+    @DisplayName("작업 담당자 변경")
+    class ChangeAssignee {
+
+        @Test
+        @DisplayName("성공: 담당자가 변경된다")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long taskId = 1L;
+            ChangeAssigneeRequest requestDto = taskMock.changeAssigneeRequest();
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}/assignee", taskId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .content(content));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.taskId").isNumber())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 담당자 변경 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("작업 담당자 변경 API")
+                                                    .pathParameters(
+                                                            parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
+                                                    .requestSchema(Schema.schema("ChangeAssigneeRequest"))
+                                                    .requestFields(
+                                                            fieldWithPath("userId").type(JsonFieldType.NUMBER)
+                                                                    .description("변경된 담당자 고유 식별 ID")
                                                     )
                                                     .responseSchema(Schema.schema("TaskIdResponse"))
                                                     .responseFields(

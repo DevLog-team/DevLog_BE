@@ -1,6 +1,7 @@
 package com.project.devlog.domain.task.mock;
 
 import com.project.devlog.domain.project.entity.Project;
+import com.project.devlog.domain.task.dto.request.ChangeAssigneeRequest;
 import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
 import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
@@ -151,6 +152,10 @@ public class TaskMock {
 
     public ChangePriorityRequest changePriorityRequest() {
         return new ChangePriorityRequest(TaskPriority.MEDIUM);
+    }
+
+    public ChangeAssigneeRequest changeAssigneeRequest() {
+        return new ChangeAssigneeRequest(2L);
     }
 
 }
