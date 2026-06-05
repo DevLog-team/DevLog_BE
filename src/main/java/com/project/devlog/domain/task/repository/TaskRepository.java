@@ -23,4 +23,8 @@ public interface TaskRepository extends JpaRepository<Task, Long>, TaskRepositor
             + "left join fetch tt.tag "
             + "where t.id = :taskId and t.isDeleted = false")
     Optional<Task> findByIdFetchUserAndTag(@Param("taskId") Long taskId);
+
+    @Query("select t.project.id from Task t "
+            + "where t.id = :taskId and t.isDeleted = false")
+    Long findProjectIdByTaskId(Long taskId);
 }

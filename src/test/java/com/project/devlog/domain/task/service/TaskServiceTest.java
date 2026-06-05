@@ -96,7 +96,7 @@ class TaskServiceTest {
             Tag tag = tagMock.domainMock();
 
             given(userRepository.findByIdAndIsDeletedFalse(request.assigneeId())).willReturn(Optional.of(assignee));
-            given(projectRepository.findProjectByIdAndIsDeletedFalse(request.projectId())).willReturn(
+            given(projectRepository.findProjectByIdAndIsDeletedFalse(project.getId())).willReturn(
                     Optional.of(project));
             given(taskMapper.toTask(request, project, assignee)).willReturn(task);
             given(taskRepository.save(task)).willReturn(task);
@@ -105,7 +105,7 @@ class TaskServiceTest {
             given(taskMapper.toTaskTag(any(Task.class), any(Tag.class))).willReturn(mock(TaskTag.class));
 
             // when
-            Long createdTaskId = sut.create(request);
+            Long createdTaskId = sut.create(project.getId(), request);
 
             // then
             assertThat(createdTaskId).isEqualTo(task.getId());
@@ -124,12 +124,12 @@ class TaskServiceTest {
             Task task = taskMock.DomainMock(assignee, project, TaskStatus.TODO, TaskPriority.HIGH);
 
             given(userRepository.findByIdAndIsDeletedFalse(request.assigneeId())).willReturn(Optional.of(assignee));
-            given(projectRepository.findProjectByIdAndIsDeletedFalse(request.projectId())).willReturn(
+            given(projectRepository.findProjectByIdAndIsDeletedFalse(project.getId())).willReturn(
                     Optional.of(project));
             given(taskMapper.toTask(request, project, assignee)).willReturn(task);
 
             // when
-            Long createdTaskId = sut.create(request);
+            Long createdTaskId = sut.create(project.getId(), request);
 
             // then
             assertThat(createdTaskId).isEqualTo(task.getId());
@@ -141,12 +141,13 @@ class TaskServiceTest {
         @DisplayName("실패: 존해하지 않거나 삭제된 담당자 ID인 경우 BusinessException이 발생한다.")
         void fail_userNotFound() {
             // given
+            Long projectId = 1L;
             CreateTaskRequest request = taskMock.createTaskRequestMock();
 
             given(userRepository.findByIdAndIsDeletedFalse(request.assigneeId())).willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> sut.create(request))
+            assertThatThrownBy(() -> sut.create(projectId, request))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining(UserErrorCode.NOT_EXIST_USER.getMessage());
 

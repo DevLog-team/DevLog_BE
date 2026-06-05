@@ -87,16 +87,17 @@ class TaskControllerTest {
         @MockCustomUser
         void success() throws Exception {
             // given
+            Long projectId = 1L;
             Long taskId = 1L;
             CreateTaskRequest requestDto = taskMock.createTaskRequestMock();
             String content = objectMapper.writeValueAsString(requestDto);
 
-            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
+            given(taskSecurityEvaluator.isProjectMember(anyLong(), anyLong())).willReturn(true);
 
-            given(taskService.create(any(CreateTaskRequest.class))).willReturn(taskId);
+            given(taskService.create(anyLong(),any(CreateTaskRequest.class))).willReturn(taskId);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/task")
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/projects/{projectId}/tasks", projectId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(content));
@@ -112,10 +113,11 @@ class TaskControllerTest {
                                             ResourceSnippetParameters.builder()
                                                     .tag("Task")
                                                     .description("작업(Task) 생성 API")
+                                                    .pathParameters(
+                                                            parameterWithName("projectId").description("조회할 프로젝트의 고유 식별 ID")
+                                                    )
                                                     .requestSchema(Schema.schema("CreateTaskRequest"))
                                                     .requestFields(
-                                                            fieldWithPath("projectId").type(JsonFieldType.NUMBER)
-                                                                    .description("프로젝트 고유 식별 ID"),
                                                             fieldWithPath("title").type(JsonFieldType.STRING)
                                                                     .description("작업 제목"),
                                                             fieldWithPath("description").type(JsonFieldType.STRING)
@@ -242,13 +244,12 @@ class TaskControllerTest {
             Long projectId = 1L;
             KanbanBoardResponse kanbanBoardResponse = taskMock.kanbanBoardResponseMock();
 
-            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
+            given(taskSecurityEvaluator.isProjectMember(anyLong(), anyLong())).willReturn(true);
 
             given(taskService.getKanbanBoard(any())).willReturn(kanbanBoardResponse);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks/kanban")
-                    .param("projectId", String.valueOf(projectId))
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/projects/{projectId}/tasks/kanban", projectId)
                     .accept(MediaType.APPLICATION_JSON));
 
             // then
@@ -263,8 +264,9 @@ class TaskControllerTest {
                                             ResourceSnippetParameters.builder()
                                                     .tag("Task")
                                                     .description("프로젝트별 칸반보드 작업 목록 조회 API")
-                                                    .queryParameters(
-                                                            parameterWithName("projectId").description("조회할 프로젝트 고유 식별 ID"))
+                                                    .pathParameters(
+                                                            parameterWithName("projectId").description("조회할 프로젝트의 고유 식별 ID")
+                                                    )
                                                     .responseSchema(Schema.schema("KanbanBoardResponse"))
                                                     .responseFields(
                                                             fieldWithPath("status").type(JsonFieldType.STRING)
@@ -331,7 +333,7 @@ class TaskControllerTest {
 
             Pageable pageable = PageRequest.of(0, 10, Sort.by("dueDate").ascending());
 
-            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
+            given(taskSecurityEvaluator.isProjectMember(anyLong(), anyLong())).willReturn(true);
 
             // Service가 반환할 Page<Task> 모킹
             Page<Task> mockTaskPage = taskMock.taskPageMock(pageable);
@@ -339,8 +341,7 @@ class TaskControllerTest {
                     .willReturn(mockTaskPage);
 
             // when
-            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/tasks")
-                    .param("projectId", String.valueOf(projectId))
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/projects/{projectId}/tasks", projectId)
                     .param("title", "API")
                     .param("assigneeId", "1")
                     .param("status", "TODO")
@@ -363,8 +364,10 @@ class TaskControllerTest {
                                             ResourceSnippetParameters.builder()
                                                     .tag("Task")
                                                     .description("검색 조건 및 페이지네이션을 포함한 작업 목록 조회 API")
+                                                    .pathParameters(
+                                                            parameterWithName("projectId").description("조회할 프로젝트의 고유 식별 ID")
+                                                    )
                                                     .queryParameters(
-                                                            parameterWithName("projectId").description("조회할 프로젝트 고유 식별 ID"),
                                                             parameterWithName("title").optional().description("검색할 작업 제목 키워드"),
                                                             parameterWithName("assigneeId").optional()
                                                                     .description("담당자 고유 ID (전체 조회시 0 또는 NULL)"),
@@ -443,7 +446,7 @@ class TaskControllerTest {
             Project project = projectMock.domainMock(ProjectStatus.ACTIVE);
             Task task = taskMock.DomainWithTagsMock(user, project, TaskStatus.TODO, TaskPriority.HIGH);
 
-            given(taskSecurityEvaluator.isMember(anyLong(), anyLong())).willReturn(true);
+            given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
 
             given(taskService.getDetails(any())).willReturn(task);
 

@@ -33,7 +33,6 @@ public class TaskMock {
 
     public CreateTaskRequest createTaskRequestMock() {
         return new CreateTaskRequest(
-                projectId,
                 title,
                 description,
                 status,
@@ -46,7 +45,6 @@ public class TaskMock {
 
     public CreateTaskRequest createTaskRequestWithoutTagsMock() {
         return new CreateTaskRequest(
-                projectId,
                 title,
                 description,
                 status,

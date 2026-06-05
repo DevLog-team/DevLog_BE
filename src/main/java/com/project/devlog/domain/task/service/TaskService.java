@@ -45,9 +45,9 @@ public class TaskService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
 
-    public Long create(CreateTaskRequest request) {
+    public Long create(Long projectId, CreateTaskRequest request) {
         User assignee = findUserById(request.assigneeId());
-        Project project = findProjectById(request.projectId());
+        Project project = findProjectById(projectId);
 
         Task task = taskMapper.toTask(request, project, assignee);
         taskRepository.save(task);
