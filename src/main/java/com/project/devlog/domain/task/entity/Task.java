@@ -97,4 +97,8 @@ public class Task extends BaseDateTime {
     public void changePriority(TaskPriority newPriority) {
         this.priority = newPriority;
     }
+
+    public void changeAssignee(User newAssignee) {
+        this.assignee = newAssignee;
+    }
 }

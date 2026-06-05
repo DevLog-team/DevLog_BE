@@ -4,6 +4,7 @@ import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.project.repository.ProjectRepository;
 import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.tag.repository.TagRepository;
+import com.project.devlog.domain.task.dto.request.ChangeAssigneeRequest;
 import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
 import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
@@ -151,5 +152,12 @@ public class TaskService {
     public void changePriority(Long taskId, ChangePriorityRequest request) {
         Task task = findTaskById(taskId);
         task.changePriority(request.priority());
+    }
+
+    @Transactional
+    public void changeAssignee(Long taskId, ChangeAssigneeRequest request) {
+        User newAssignee = findUserById(request.userId());
+        Task task = findTaskById(taskId);
+        task.changeAssignee(newAssignee);
     }
 }

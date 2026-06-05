@@ -1,5 +1,6 @@
 package com.project.devlog.domain.task.controller;
 
+import com.project.devlog.domain.task.dto.request.ChangeAssigneeRequest;
 import com.project.devlog.domain.task.dto.request.ChangePriorityRequest;
 import com.project.devlog.domain.task.dto.request.ChangeStatusRequest;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
@@ -132,4 +133,16 @@ public class TaskController {
         taskService.changePriority(taskId, request);
         return ResponseEntity.ok().body(taskMapper.toIdDto(taskId));
     }
+
+    @PatchMapping("/api/tasks/{taskId}/assignee")
+    @PreAuthorize("@taskSecurity.isTaskAccessAllowed(#taskId, #userId)")
+    public ResponseEntity<TaskIdResponse> changeAssignee(
+            @CurrentUser Long userId,
+            @PathVariable Long taskId,
+            @Valid @RequestBody ChangeAssigneeRequest request
+    ) {
+        taskService.changeAssignee(taskId, request);
+        return ResponseEntity.ok().body(taskMapper.toIdDto(taskId));
+    }
+
 }
