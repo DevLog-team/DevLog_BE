@@ -37,3 +37,25 @@ Authorization: Bearer {{accessToken}}
 ### 작업 상세 조회
 GET http://localhost:8080/api/tasks/1
 Authorization: Bearer {{accessToken}}
+
+
+### 작업 기본정보 수정
+PATCH http://localhost:8080/api/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "수정된 이름",
+  "description": "수정된 설명"
+}
+
+
+
+### 작업 상태 수정
+PATCH http://localhost:8080/api/tasks/1/status
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "status": "TODO"
+}

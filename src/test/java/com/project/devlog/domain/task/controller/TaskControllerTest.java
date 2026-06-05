@@ -18,6 +18,7 @@ import com.project.devlog.domain.project.entity.enums.ProjectStatus;
 import com.project.devlog.domain.project.mock.ProjectMock;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
+import com.project.devlog.domain.task.dto.request.UpdateStatusRequest;
 import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.entity.Task;
@@ -551,6 +552,62 @@ class TaskControllerTest {
                                                             fieldWithPath("description").type(JsonFieldType.STRING)
                                                                     .optional()
                                                                     .description("수정된 설명")
+                                                    )
+                                                    .responseSchema(Schema.schema("TaskIdResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태 코드/메시지"),
+                                                            fieldWithPath("body.taskId").type(JsonFieldType.NUMBER)
+                                                                    .description("작업 고유 ID"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 발행 일시")
+                                                    )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+
+    @Nested
+    @DisplayName("작업 상태 수정")
+    class UpdateStatus {
+
+        @Test
+        @DisplayName("성공: 상태값이 변경된다")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long taskId = 1L;
+            UpdateStatusRequest requestDto = taskMock.updateStatusRequest();
+            String content = objectMapper.writeValueAsString(requestDto);
+
+            given(taskSecurityEvaluator.isTaskAccessAllowed(anyLong(), anyLong())).willReturn(true);
+
+            // when
+            ResultActions perform = mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/tasks/{taskId}/status", taskId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(content));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.taskId").isNumber())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("작업 상태 수정 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Task")
+                                                    .description("작업 상태 수정 API")
+                                                    .pathParameters(
+                                                            parameterWithName("taskId").description("조회할 작업 고유 식별 ID"))
+                                                    .requestSchema(Schema.schema("UpdateTaskRequest"))
+                                                    .requestFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("수정도니 상태값")
                                                     )
                                                     .responseSchema(Schema.schema("TaskIdResponse"))
                                                     .responseFields(

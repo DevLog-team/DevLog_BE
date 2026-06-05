@@ -2,6 +2,7 @@ package com.project.devlog.domain.task.mock;
 
 import com.project.devlog.domain.project.entity.Project;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
+import com.project.devlog.domain.task.dto.request.UpdateStatusRequest;
 import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TagResponse;
@@ -142,5 +143,9 @@ public class TaskMock {
                 "수정된 제목",
                 "수정된 설명"
         );
+    }
+
+    public UpdateStatusRequest updateStatusRequest() {
+        return new UpdateStatusRequest(TaskStatus.IN_PROGRESS);
     }
 }
