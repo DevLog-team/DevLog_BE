@@ -6,6 +6,7 @@ import com.project.devlog.domain.tag.entity.Tag;
 import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
+import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TaskResponse;
 import com.project.devlog.domain.task.entity.Task;
@@ -22,6 +23,7 @@ import com.project.devlog.global.exception.errorcode.ProjectErrorCode;
 import com.project.devlog.global.exception.errorcode.TagErrorCode;
 import com.project.devlog.global.exception.errorcode.TaskErrorCode;
 import com.project.devlog.global.exception.errorcode.UserErrorCode;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -124,6 +126,16 @@ public class TaskService {
 
     private Task findTaskByIdFetchUserAndTag(Long taskId) {
         return taskRepository.findByIdFetchUserAndTag(taskId)
+                .orElseThrow(() -> new BusinessException(TaskErrorCode.TASK_NOT_FOUND));
+    }
+
+    public void updateBasicInfo(Long taskId, UpdateTaskRequest request) {
+        Task task = findTaskById(taskId);
+        task.update(request.title(), request.description());
+    }
+
+    private Task findTaskById(Long taskId) {
+        return taskRepository.findByIdAndIsDeletedFalse(taskId)
                 .orElseThrow(() -> new BusinessException(TaskErrorCode.TASK_NOT_FOUND));
     }
 }

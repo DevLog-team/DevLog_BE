@@ -78,4 +78,9 @@ public class Task extends BaseDateTime {
         this.assignee = assignee;
         this.project = project;
     }
+
+    public void update(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
 }

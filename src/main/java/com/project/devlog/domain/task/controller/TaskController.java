@@ -2,6 +2,7 @@ package com.project.devlog.domain.task.controller;
 
 import com.project.devlog.domain.task.dto.request.CreateTaskRequest;
 import com.project.devlog.domain.task.dto.request.TaskSearchCondition;
+import com.project.devlog.domain.task.dto.request.UpdateTaskRequest;
 import com.project.devlog.domain.task.dto.response.KanbanBoardResponse;
 import com.project.devlog.domain.task.dto.response.TaskIdResponse;
 import com.project.devlog.domain.task.dto.response.TaskListResponse;
@@ -27,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -96,4 +98,14 @@ public class TaskController {
         return ResponseEntity.ok().body(taskMapper.toTaskResponse(task));
     }
 
+    @PatchMapping("/api/tasks/{taskId}")
+    @PreAuthorize("@taskSecurity.isTaskAccessAllowed(#taskId, #userId)")
+    public ResponseEntity<TaskIdResponse> updateBasicInfo(
+            @CurrentUser Long userId,
+            @PathVariable Long taskId,
+            @Valid @RequestBody UpdateTaskRequest request
+    ) {
+        taskService.updateBasicInfo(taskId, request);
+        return ResponseEntity.ok().body(taskMapper.toIdDto(taskId));
+    }
 }
