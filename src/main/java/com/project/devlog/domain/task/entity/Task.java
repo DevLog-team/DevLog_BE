@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -79,8 +80,17 @@ public class Task extends BaseDateTime {
         this.project = project;
     }
 
-    public void update(String title, String description) {
-        this.title = title;
-        this.description = description;
+    public void update(String newTitle, String newDescription) {
+        this.title = newTitle;
+        this.description = newDescription;
+    }
+
+    public void updateStatus(TaskStatus newStatus) {
+        this.status = newStatus;
+        if (newStatus == TaskStatus.DONE) {
+            this.completedAt = LocalDateTime.now();
+        } else {
+            this.completedAt = null;
+        }
     }
 }
