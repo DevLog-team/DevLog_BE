@@ -3,7 +3,6 @@ package com.project.devlog.domain.project.controller;
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -26,6 +25,8 @@ import com.project.devlog.domain.project.entity.projection.ProjectListProjection
 import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.domain.project.mock.ProjectMock;
 import com.project.devlog.domain.project.service.ProjectService;
+import com.project.devlog.domain.user.entity.User;
+import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.global.config.AuthTestConfig;
 import com.project.devlog.global.config.SecurityConfig;
 import com.project.devlog.global.security.annotation.MockCustomUser;
@@ -60,6 +61,9 @@ class ProjectControllerTest {
 
     @Autowired
     ProjectMock projectMock;
+
+    @Autowired
+    UserMock userMock;
 
     @Autowired
     private ProjectService projectService;
@@ -482,6 +486,53 @@ class ProjectControllerTest {
                                                             fieldWithPath("timestamp").type(JsonFieldType.STRING)
                                                                     .description("응답 시간")
                                                     )
+                                                    .build()
+                                    )
+                            )
+                    );
+        }
+    }
+
+    @Nested
+    @DisplayName("프로젝트 팀원 목록 조회")
+    class getMembers {
+
+        @Test
+        @DisplayName("성공: 프로젝트에 참여 중인 팀원 목록 조회")
+        @MockCustomUser
+        void success() throws Exception {
+            // given
+            Long projectId = 1L;
+            User user = userMock.domainMock();
+
+            given(projectService.getMembers(any())).willReturn(List.of(user));
+
+            // when
+            ResultActions perform = mockMvc.perform(
+                    RestDocumentationRequestBuilders.get("/api/projects/{projectId}/members", projectId)
+                            .accept(MediaType.APPLICATION_JSON));
+
+            // then
+            perform
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.status").isString())
+                    .andExpect(jsonPath("$.body.members").isArray())
+                    .andExpect(jsonPath("$.timestamp").isString())
+                    .andDo(document("프로젝트 팀원 목록 조회 성공",
+                                    resource(
+                                            ResourceSnippetParameters.builder()
+                                                    .tag("Project")
+                                                    .description("프로젝트 팀원 목록 조회 API")
+                                                    .responseSchema(Schema.schema("ProjectMembersResponse"))
+                                                    .responseFields(
+                                                            fieldWithPath("status").type(JsonFieldType.STRING)
+                                                                    .description("응답 상태"),
+                                                            fieldWithPath("body.members[].userId").type(JsonFieldType.NUMBER)
+                                                                    .description("팀원 ID"),
+                                                            fieldWithPath("body.members[].name").type(JsonFieldType.STRING)
+                                                                    .description("팀원 이름"),
+                                                            fieldWithPath("timestamp").type(JsonFieldType.STRING)
+                                                                    .description("응답 시간"))
                                                     .build()
                                     )
                             )

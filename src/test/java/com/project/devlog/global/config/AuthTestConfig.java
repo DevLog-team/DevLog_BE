@@ -10,12 +10,16 @@ import com.project.devlog.domain.project.service.ProjectService;
 import com.project.devlog.domain.tag.mapper.TagMapper;
 import com.project.devlog.domain.tag.mock.TagMock;
 import com.project.devlog.domain.tag.service.TagService;
+import com.project.devlog.domain.task.mapper.TaskMapper;
+import com.project.devlog.domain.task.mock.TaskMock;
+import com.project.devlog.domain.task.service.TaskService;
 import com.project.devlog.domain.user.mapper.UserMapper;
 import com.project.devlog.domain.user.mock.UserMock;
 import com.project.devlog.domain.user.repository.UserRepository;
 import com.project.devlog.domain.user.service.UserService;
 import com.project.devlog.global.cache.RedisRepository;
 import com.project.devlog.global.security.evaluator.ProjectSecurityEvaluator;
+import com.project.devlog.global.security.evaluator.TaskSecurityEvaluator;
 import com.project.devlog.global.security.handler.AccessDeniedCustomHandler;
 import com.project.devlog.global.security.handler.AuthenticationEntryPointCustom;
 import com.project.devlog.global.security.handler.AuthenticationFailureCustomHandler;
@@ -92,6 +96,11 @@ public class AuthTestConfig {
         return Mockito.mock(ProjectSecurityEvaluator.class);
     }
 
+    @Bean(name = "taskSecurity")
+    public TaskSecurityEvaluator taskSecurityEvaluator() {
+        return Mockito.mock(TaskSecurityEvaluator.class);
+    }
+
     @Bean
     public AuthService authService() {
         return new AuthService(
@@ -105,7 +114,9 @@ public class AuthTestConfig {
     }
 
     @Bean
-    public RedisRepository redisRepository() { return Mockito.mock(RedisRepository.class); }
+    public RedisRepository redisRepository() {
+        return Mockito.mock(RedisRepository.class);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -133,7 +144,9 @@ public class AuthTestConfig {
     }
 
     @Bean
-    public ProjectService projectService() { return Mockito.mock(ProjectService.class); }
+    public ProjectService projectService() {
+        return Mockito.mock(ProjectService.class);
+    }
 
     @Bean
     public ProjectMapper projectMapper() {
@@ -146,7 +159,9 @@ public class AuthTestConfig {
     }
 
     @Bean
-    public TagService tagService() { return Mockito.mock(TagService.class); }
+    public TagService tagService() {
+        return Mockito.mock(TagService.class);
+    }
 
     @Bean
     public TagMapper tagMapper() {
@@ -156,5 +171,20 @@ public class AuthTestConfig {
     @Bean
     public TagMock tagMock() {
         return new TagMock();
+    }
+
+    @Bean
+    public TaskService taskService() {
+        return Mockito.mock(TaskService.class);
+    }
+
+    @Bean
+    public TaskMapper taskMapper() {
+        return new TaskMapper();
+    }
+
+    @Bean
+    public TaskMock taskMock() {
+        return new TaskMock();
     }
 }

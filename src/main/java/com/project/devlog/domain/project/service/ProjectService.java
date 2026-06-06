@@ -103,7 +103,8 @@ public class ProjectService {
         return projectMapper.toInviteMembersResponse(successEmails, failedEmails);
     }
 
-    private void processInvitation(Project project, String email, List<String> successEmails, List<String> failedEmails) {
+    private void processInvitation(Project project, String email, List<String> successEmails,
+                                   List<String> failedEmails) {
         Optional<User> userOptional = userRepository.findByEmailAndIsDeletedFalse(email);
 
         if (userOptional.isEmpty()) {
@@ -129,5 +130,13 @@ public class ProjectService {
 
         projectUserRepository.save(projectUser);
         successEmails.add(email);
+    }
+
+    public List<User> getMembers(Long projectId) {
+        List<ProjectUser> projectUsers = projectUserRepository.findActiveMembersByProjectId(projectId);
+
+        return projectUsers.stream()
+                .map(ProjectUser::getUser)
+                .toList();
     }
 }

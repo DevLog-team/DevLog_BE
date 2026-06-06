@@ -49,3 +49,7 @@ Authorization: Bearer {{accessToken}}
     "test3@naver.com"
   ]
 }
+
+### 프로젝트 팀원 목록 조회
+GET http://localhost:8080/api/projects/1/members
+Authorization: Bearer {{accessToken}}

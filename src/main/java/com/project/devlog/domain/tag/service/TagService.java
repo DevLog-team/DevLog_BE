@@ -7,13 +7,13 @@ import com.project.devlog.domain.tag.mapper.TagMapper;
 import com.project.devlog.domain.tag.repository.TagRepository;
 import com.project.devlog.global.exception.BusinessException;
 import com.project.devlog.global.exception.errorcode.TagErrorCode;
-import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TagService {
 
