@@ -3,6 +3,8 @@ package com.project.devlog.domain.project.mapper;
 import com.project.devlog.domain.project.dto.request.CreateProjectRequest;
 import com.project.devlog.domain.project.dto.response.InviteMembersResponse;
 import com.project.devlog.domain.project.dto.response.ProjectDetailResponse;
+import com.project.devlog.domain.project.dto.response.ProjectMembersResponse;
+import com.project.devlog.domain.project.dto.response.ProjectMembersResponse.ProjectMember;
 import com.project.devlog.domain.project.entity.projection.ProjectProjection;
 import com.project.devlog.global.response.dto.PageInfo;
 import com.project.devlog.domain.project.dto.response.ProjectIdResponse;
@@ -88,5 +90,13 @@ public class ProjectMapper {
 
     public InviteMembersResponse toInviteMembersResponse(List<String> successEmails, List<String> failedEmails) {
         return new InviteMembersResponse(successEmails, failedEmails);
+    }
+
+    public ProjectMembersResponse toProjectMembersResponse(List<User> members) {
+        List<ProjectMember> projectMembers = members.stream()
+                .map(user -> new ProjectMember(user.getId(), user.getName()))
+                .toList();
+
+        return new ProjectMembersResponse(projectMembers);
     }
 }
